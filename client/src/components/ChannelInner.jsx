@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { MessageList, MessageInput, Thread, Window, useChannelActionContext, Avatar, useChannelStateContext, useChatContext } from 'stream-chat-react';
 
 import { ChannelInfo } from '../assets';
+import { CustomChannelHeader } from './CustomChannelHeader.jsx';
 
 export const GiphyContext = React.createContext({});
 
@@ -32,7 +33,7 @@ const ChannelInner = ({ setIsEditing }) => {
     <GiphyContext.Provider value={{ giphyState, setGiphyState }}>
       <div style={{ display: 'flex', width: '100%' }}>
         <Window>
-          <TeamChannelHeader setIsEditing={setIsEditing} />
+          <CustomChannelHeader setIsEditing={setIsEditing} />                    
           <MessageList />
           <MessageInput overrideSubmitHandler={overrideSubmitHandler} />
         </Window>
@@ -41,6 +42,8 @@ const ChannelInner = ({ setIsEditing }) => {
     </GiphyContext.Provider>
   );
 };
+
+//<TeamChannelHeader setIsEditing={setIsEditing} />          
 
 const TeamChannelHeader = ({ setIsEditing }) => {
     const { channel, watcher_count } = useChannelStateContext();

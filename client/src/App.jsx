@@ -3,14 +3,16 @@ import { StreamChat } from 'stream-chat';
 import { Chat } from 'stream-chat-react';
 import Cookies from 'universal-cookie';
 
-import { ChannelListContainer, ChannelContainer, Auth } from './components';
+import { ChannelListContainer, ChannelContainer, Auth, } from './components';
 
-import 'stream-chat-react/dist/css/index.css';
+import 'stream-chat-react/dist/css/v2/index.css';
+//import 'stream-chat-react/dist/css/index.css';
+//import 'stream-chat-react/dist/scss/v2/index.scss'
 import './App.css';
 
 const cookies = new Cookies();
 
-const apiKey = 'qgtk9ttyha7j';
+const apiKey = '4c76954fycg4';
 const authToken = cookies.get("token");
 
 const client = StreamChat.getInstance(apiKey);
@@ -22,7 +24,7 @@ if(authToken) {
         fullName: cookies.get('fullName'),
         image: cookies.get('avatarURL'),
         hashedPassword: cookies.get('hashedPassword'),
-        phoneNumber: cookies.get('phoneNumber'),
+        phoneNumber: cookies.get('phoneNumber'),        
     }, authToken)
 }
 
@@ -36,7 +38,7 @@ const App = () => {
 
     return (
         <div className="app__wrapper">
-            <Chat client={client} theme="team light">
+            <Chat client={client} theme="team" >
                 <ChannelListContainer 
                     isCreating={isCreating}
                     setIsCreating={setIsCreating}

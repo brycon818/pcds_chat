@@ -11,17 +11,38 @@ const app_id = process.env.STREAM_APP_ID;
 
 const signup = async (req, res) => {
     try {
-        const { fullName, username, password, phoneNumber } = req.body;
+        console.log(req.body) ;
+        const { fullName, username, password, phoneNumber, userTeams } = req.body;
 
-        const userId = crypto.randomBytes(16).toString('hex');
+        //const userId = crypto.randomBytes(16).toString('hex');
+        const userId = username;
 
         const serverClient = connect(api_key, api_secret, app_id);
+        const streamChat = StreamChat.getInstance(
+            api_key,
+            api_secret 
+          );
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        const existingUsers = await streamChat.queryUsers({ userId })
+        if (existingUsers.users.length > 0) {
+            return res.status(400).send("User ID taken")
+            }
+
+        await streamChat.upsertUser({ 
+            id : userId, 
+            name : username, 
+            fullName,
+            password : hashedPassword,
+            phoneNumber : phoneNumber,
+            teams : userTeams,
+            role: 'admin'
+         })
+
         const token = serverClient.createUserToken(userId);
 
-        res.status(200).json({ token, fullName, username, userId, hashedPassword, phoneNumber });
+        res.status(200).json({ token, fullName, username, userId, hashedPassword, phoneNumber, role:"admin" });
     } catch (error) {
         console.log(error);
 
@@ -45,11 +66,11 @@ const login = async (req, res) => {
         const token = serverClient.createUserToken(users[0].id);
 
         if(success) {
-            res.status(200).json({ token, fullName: users[0].fullName, username, userId: users[0].id});
+            res.status(200).json({ token, fullName: users[0].fullName, username, userId: users[0].id, role: users[0].role});
         } else {
             res.status(500).json({ message: 'Incorrect password' });
         }
-    } catch (error) {ads
+    } catch (error) {
         console.log(error);
 
         res.status(500).json({ message: error });

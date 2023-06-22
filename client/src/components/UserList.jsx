@@ -8,7 +8,7 @@ const ListContainer = ({ children }) => {
         <div className="user-list__container">
             <div className="user-list__header">
                 <p>User</p>
-                <p>Invite</p>
+                <p>Add</p>
             </div>
             {children}
         </div>
@@ -51,14 +51,35 @@ const UserList = ({ setSelectedUsers }) => {
         const getUsers = async () => {
             if(loading) return;
 
-            setLoading(true);
+            setLoading(true);           
             
             try {
-                const response = await client.queryUsers(
-                    { id: { $ne: client.userID } },
-                    { id: 1 },
-                    { limit: 8 } 
+                const allUsers = await client.queryUsers(
+                     { id: { $ne: client.userID } },
+                      { id: 1 },                    
+                      //{ limit: 8 }                    
                 );
+                                                                              
+                for (let i = 0; i < allUsers.users.length; i++) {  
+                    let isFound = false;                  
+                    if (allUsers.users[i].teams !== undefined)  {
+                        const userTeams = allUsers.users[i].teams;                                                
+                        if (userTeams !== null)
+                            for (let j = 0; j < userTeams.length; j++) {                                                                  
+                                if (client.user.teams !== undefined) 
+                                    if (client.user.teams !== null)
+                                        if (client.user.teams.includes(userTeams[j])) {
+                                             //filteredUsers.push(allUsers.users[i]);   
+                                             isFound = true;                                          
+                                             break;
+                                        }
+                            }
+                    }
+                    if (!isFound)
+                       allUsers.users.splice(i,1);
+                  }
+                                  
+                const response = allUsers;
 
                 if(response.users.length) {
                     setUsers(response.users);
