@@ -33,6 +33,7 @@ const App = () => {
     const [createType, setCreateType] = useState('');
     const [isCreating, setIsCreating] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+    const [isEditingProfile, setIsEditingProfile] = useState(false);
 
     if(!authToken) return <Auth />
 
@@ -44,12 +45,15 @@ const App = () => {
                     setIsCreating={setIsCreating}
                     setCreateType={setCreateType}
                     setIsEditing={setIsEditing}
+                    setIsEditingProfile={setIsEditingProfile}
                 />
                 <ChannelContainer 
                     isCreating={isCreating}
                     setIsCreating={setIsCreating}
                     isEditing={isEditing}
                     setIsEditing={setIsEditing}
+                    isEditingProfile={isEditingProfile}
+                    setIsEditingProfile={setIsEditingProfile}
                     createType={createType}
                 />
             </Chat>

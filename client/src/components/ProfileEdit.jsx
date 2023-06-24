@@ -3,33 +3,34 @@ import Cookies from 'universal-cookie';
 import axios from 'axios';
 
 import signinImage from '../assets/signup.jpg';
-import Select, { SelectInstance } from "react-select"
+import Select, {setSelectedValues} from "react-select"
+
+import { CloseEditProfile } from '../assets';
+import { useChatContext } from "stream-chat-react/dist/context"    
 
 
 const cookies = new Cookies();
 
-const initialState = {
-    fullName: '',
-    username: '',
-    password: '',
-    confirmPassword: '',
-    phoneNumber: '',
-    avatarURL: '',
-}
 
-const Auth = () => {
-    const [form, setForm] = useState(initialState);
-    const [isSignup, setIsSignup] = useState(false);
-    const [selectedValues, setSelectedValues] = useState([]);
-
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
+   
     
 
-    const handleSelectChange = (selectedOptions) => {
-        setSelectedValues(selectedOptions);
-      };
+const ProfileEdit = ({setIsEditingProfile}) => {
+    const { client } = useChatContext();    
+    
+    const initialState = {
+        fullName: client.user.fullName,
+        username: client.user.name,
+        password: '',
+        confirmPassword: '',
+        phoneNumber: client.user.phoneNumber,
+        avatarURL: client.user.image,
+        email: client.user.email
+    }
+
+    const [form, setForm] = useState(initialState);
+    
+    const [isSignup, setIsSignup] = useState(true);
 
     const teamOptions = [
         { value: 'GWA', label: 'GWA' },
@@ -38,14 +39,35 @@ const Auth = () => {
         { value: 'KAUAI', label: 'KAUAI' },
         { value: 'GSWC', label: 'GSWC' },
       ];
+   
+    
+    let initialOptions = [];
+      
+    for (let i = 0; i < client.user.teams.length; i++) {              
+        initialOptions.push({value : client.user.teams[i], label : client.user.teams[i]});
+    }
+        
+    const [selectedValues, setSelectedValues] = useState(initialOptions);
+    
+    console.log(selectedValues);
 
+    const handleChange = (e) => {
+        setForm({...form, [e.target.name]: e.target.value });
+    };
+    
+
+    const handleSelectChange = (selectedOptions) => {
+        setSelectedValues(selectedOptions);       
+      };
+
+    
     /*const memberIdsRef =
       useRef<SelectInstance<{ label: string, value: string }>>(null)  ;*/
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const { username, password, phoneNumber, avatarURL, email } = form;
+        //let { username, fullName, password, phoneNumber, avatarURL, email } = form;
 
         const URL = 'http://localhost:5000/auth';
         // const URL = 'https://medical-pager.herokuapp.com/auth';
@@ -55,10 +77,18 @@ const Auth = () => {
         for (let i = 0; i < selectedValues.length; i++) {              
             userTeams.push(selectedValues[i].value);
         }
+
+        const fullName1 = (form.fullName || client.user.fullName);
+        const phoneNumber = (form.phoneNumber || client.user.phoneNumber);
+        const email = (form.email || client.user.email);
+        const avatarURL = (form.avatarURL || client.user.avatarURL);
+        const password = form.password;
+        const username = client.user.name;
+
         
         try {
-            const { data: { token, userId, hashedPassword, fullName, role} } = await axios.post(`${URL}/${isSignup ? 'signup' : 'login'}`, {
-                username, password, fullName: form.fullName, phoneNumber, avatarURL, userTeams, email});
+            const { data: { token, userId, hashedPassword, fullName, role} } = await axios.post(`${URL}/${isSignup ? 'update' : 'login'}`, {
+                username : client.user.name, password, fullName : fullName1, phoneNumber, avatarURL, userTeams, email});
 
             cookies.set('token', token);
             cookies.set('username', username);
@@ -80,9 +110,7 @@ const Auth = () => {
           alert("Unable to Login, check username and password.")  
           console.error('Error BCC:', error);
         }
-
         
-
         
         
     }
@@ -91,41 +119,50 @@ const Auth = () => {
         setIsSignup((prevIsSignup) => !prevIsSignup);
     }
 
+    //auth__form-container_fields-content
+    
     return (
-        <div className="auth__form-container">
-            <div className="auth__form-container_fields">
+        <div className="auth__form-container2">
+            <div className="auth__form-container_fields bg-gray-100">
                 <div className="auth__form-container_fields-content">
-                    <p>{isSignup ? 'Sign Up' : 'Sign In'}</p>
+                    <div className="edit-channel__header">
+                    <p>Edit Profile</p>                    
+                    <CloseEditProfile  setIsEditingProfile={setIsEditingProfile} />                                        
+                    </div>
                     <form onSubmit={handleSubmit}>
+                        <div className="auth__form-container_fields-content_input">
+                            <label htmlFor="username">Username</label>
+                                <input 
+                                    name="username" 
+                                    value={form.username}
+                                    type="text"
+                                    placeholder="Username"
+                                    onChange={handleChange}
+                                    required
+                                    readOnly
+                                />
+                        </div>
                         {isSignup && (
                             <div className="auth__form-container_fields-content_input">
                                 <label htmlFor="fullName">Full Name</label>
                                 <input 
                                     name="fullName" 
+                                    value={form.fullName}
                                     type="text"
                                     placeholder="Full Name"
                                     onChange={handleChange}
                                     required
                                 />
                             </div>
-                        )}
-                        <div className="auth__form-container_fields-content_input">
-                            <label htmlFor="username">Username</label>
-                                <input 
-                                    name="username" 
-                                    type="text"
-                                    placeholder="Username"
-                                    onChange={handleChange}
-                                    required
-                                />
-                        </div>
+                        )}                        
                         {isSignup && (
                             <div className="auth__form-container_fields-content_input">
                                 <label htmlFor="email">E-mail Address</label>
                                 <input 
                                     name="email" 
                                     type="text"
-                                    placeholder="e-mail address"
+                                    placeholder="E-mail address"
+                                    value={form.email}
                                     onChange={handleChange}
                                     required
                                 />
@@ -138,6 +175,7 @@ const Auth = () => {
                                     name="phoneNumber" 
                                     type="text"
                                     placeholder="Phone Number"
+                                    value={form.phoneNumber}
                                     onChange={handleChange}                                    
                                 />
                             </div>
@@ -146,7 +184,7 @@ const Auth = () => {
                             <div className="auth__form-container_fields-content_input">
                                 <label htmlFor="Teams">Teams</label>
                                 <Select
-                                  //  ref={memberIdsRef}
+                                   // ref={userTeamsref}
                                     name="userTeams"
                                     id="teams"
                                     required
@@ -167,6 +205,7 @@ const Auth = () => {
                                     name="avatarURL" 
                                     type="text"
                                     placeholder="Avatar URL"
+                                    value={form.avatarURL}
                                     onChange={handleChange}
                                     required
                                 />
@@ -178,8 +217,7 @@ const Auth = () => {
                                     name="password" 
                                     type="password"
                                     placeholder="Password"
-                                    onChange={handleChange}
-                                    required
+                                    onChange={handleChange}                                    
                                 />
                             </div>
                         {isSignup && (
@@ -189,33 +227,18 @@ const Auth = () => {
                                     name="confirmPassword" 
                                     type="password"
                                     placeholder="Confirm Password"
-                                    onChange={handleChange}
-                                    required
+                                    onChange={handleChange}                                    
                                 />
                             </div>
                             )}
                         <div className="auth__form-container_fields-content_button">
-                            <button>{isSignup ? "Sign Up" : "Sign In"}</button>
+                            <button>{isSignup ? "Update Profile" : "Sign In"}</button>
                         </div>
-                    </form>
-                    <div className="auth__form-container_fields-account">
-                        <p>
-                            {isSignup
-                             ? "Already have an account?" 
-                             : "Don't have an account?"
-                             }
-                             <span onClick={switchMode}>
-                             {isSignup ? 'Sign In' : 'Sign Up'}
-                             </span>
-                        </p>
-                    </div>
+                    </form>                    
                 </div> 
-            </div>
-            <div className="auth__form-container_image">
-                <img src={signinImage} alt="sign in" />
-            </div>
+            </div>            
         </div>
     )
 }
 
-export default Auth
+export default ProfileEdit

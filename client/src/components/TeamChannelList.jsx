@@ -28,7 +28,7 @@ const TeamChannelList = ({ setToggleContainer, children, error = false, loading,
     }
 
   
-   console.log(client.user.role);
+   
     
     return (
         <div className="team-channel-list">

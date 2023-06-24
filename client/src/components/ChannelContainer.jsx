@@ -1,9 +1,9 @@
 import React from 'react';
 import { Channel, MessageSimple , Window } from 'stream-chat-react';
 
-import { ChannelInner, CreateChannel, EditChannel } from './';
+import { ChannelInner, CreateChannel, EditChannel, ProfileEdit } from './';
 
-const ChannelContainer = ({ isCreating, setIsCreating, isEditing, setIsEditing, createType }) => {
+const ChannelContainer = ({ isCreating, setIsCreating, isEditing, setIsEditing, createType, isEditingProfile, setIsEditingProfile}) => {
     if(isCreating) {
         return (
             <div className="channel__container">
@@ -16,6 +16,14 @@ const ChannelContainer = ({ isCreating, setIsCreating, isEditing, setIsEditing, 
         return (
             <div className="channel__container">
                 <EditChannel setIsEditing={setIsEditing} />
+            </div> 
+        )
+    }
+    
+    if(isEditingProfile) {
+        return (
+            <div className="channel__container">
+                <ProfileEdit setIsEditingProfile={setIsEditingProfile} />
             </div> 
         )
     }
