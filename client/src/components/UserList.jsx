@@ -52,41 +52,40 @@ const UserList = ({ setSelectedUsers }) => {
             if(loading) return;
 
             setLoading(true);           
-            
+            let filteredUsers = [];
             try {
                 const allUsers = await client.queryUsers(
                      { id: { $ne: client.userID } },
                       { id: 1 },                    
                       //{ limit: 8 }                    
-                );
+                );                                
                                                                               
-                for (let i = 0; i < allUsers.users.length; i++) {  
-                    let isFound = false;                  
-                    if (allUsers.users[i].teams !== undefined)  {
+                for (let i = 0; i < allUsers.users.length; i++) {                      
+                    if (allUsers.users[i].teams !== undefined)  {                        
                         const userTeams = allUsers.users[i].teams;                                                
-                        if (userTeams !== null)
+                        if (userTeams !== null) {                            
                             for (let j = 0; j < userTeams.length; j++) {                                                                  
                                 if (client.user.teams !== undefined) 
                                     if (client.user.teams !== null)
                                         if (client.user.teams.includes(userTeams[j])) {
-                                             //filteredUsers.push(allUsers.users[i]);   
-                                             isFound = true;                                          
-                                             break;
+                                             filteredUsers.push(allUsers.users[i]);                                                                                             
+                                             break;                                             
                                         }
                             }
-                    }
-                    if (!isFound)
-                       allUsers.users.splice(i,1);
+                        }
+                    }                    
                   }
                                   
-                const response = allUsers;
+                const response = filteredUsers;
+                
 
-                if(response.users.length) {
-                    setUsers(response.users);
+                if(response.length) {
+                    setUsers(response);
                 } else {
                     setListEmpty(true);
                 }
             } catch (error) {
+                console.log(error);
                setError(true);
             }
             setLoading(false);

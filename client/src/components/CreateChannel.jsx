@@ -29,7 +29,8 @@ const CreateChannel = ({ createType, setIsCreating }) => {
         e.preventDefault();
 
         try {
-            const newChannel = await client.channel(createType, channelName, {
+            //previously has "await"
+            const newChannel =  client.channel(createType, channelName, {
                 name: channelName, members: selectedUsers
             });
 

@@ -96,7 +96,7 @@ const update = async (req, res) => {
         
         const { fullName, username, password, phoneNumber, userTeams, email } = req.body;
         
-        console.log(req.body);
+        
         const userId = username;
 
         const serverClient = connect(api_key, api_secret, app_id);
@@ -120,8 +120,8 @@ const update = async (req, res) => {
         }
         
         let hashedPassword = '';
-
-        if (password==null) {
+        
+        if ((password===null) || (password==='')) {
             hashedPassword = existingUsers.users[0].hashedPassword;           
         }
         else {

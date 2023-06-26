@@ -2,19 +2,15 @@ import React, { useState } from 'react';
 import Cookies from 'universal-cookie';
 import axios from 'axios';
 
-import signinImage from '../assets/signup.jpg';
+
 import Select, {setSelectedValues} from "react-select"
 
 import { CloseEditProfile } from '../assets';
 import { useChatContext } from "stream-chat-react/dist/context"    
 
 
-const cookies = new Cookies();
-
-
-   
+const cookies = new Cookies();   
     
-
 const ProfileEdit = ({setIsEditingProfile}) => {
     const { client } = useChatContext();    
     
@@ -48,14 +44,12 @@ const ProfileEdit = ({setIsEditingProfile}) => {
     }
         
     const [selectedValues, setSelectedValues] = useState(initialOptions);
-    
-    console.log(selectedValues);
+        
 
     const handleChange = (e) => {
         setForm({...form, [e.target.name]: e.target.value });
     };
     
-
     const handleSelectChange = (selectedOptions) => {
         setSelectedValues(selectedOptions);       
       };
@@ -139,7 +133,7 @@ const ProfileEdit = ({setIsEditingProfile}) => {
                                     placeholder="Username"
                                     onChange={handleChange}
                                     required
-                                    readOnly
+                                    readOnly={(client.user.role!=="admin")}
                                 />
                         </div>
                         {isSignup && (

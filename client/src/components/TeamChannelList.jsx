@@ -5,7 +5,7 @@ import { AddChannel } from '../assets';
 import Cookies from 'universal-cookie';
 import { useChatContext } from 'stream-chat-react';
 
-const TeamChannelList = ({ setToggleContainer, children, error = false, loading, type, isCreating, setIsCreating, setCreateType, setIsEditing }) => {   
+const TeamChannelList = ({ setToggleContainer, children, error = false, loading, type, isCreating, setIsCreating, setCreateType, setIsEditing, loadedChannels }) => {   
     const { client } = useChatContext();
     if(error) {
         return type === 'team' ? (
@@ -27,9 +27,38 @@ const TeamChannelList = ({ setToggleContainer, children, error = false, loading,
         )
     }
 
-  
-   
     
+    if (loadedChannels != null && loadedChannels.length > 0) { 
+        loadedChannels.map(channel => {
+           
+            channel.on( event => {      
+                if (event.type === 'message.new' && channel.state.unreadCount > 0 ) { 
+                  const existingNotification = window.Notification && window.Notification.permission === "granted"
+                ? window.navigator.serviceWorker.getRegistration().then(registration => {
+                    return registration?.getNotifications({ tag: event.message?.id });
+                  })
+                : Promise.resolve([]);
+              
+              existingNotification.then(notifications => {
+                  if (notifications && notifications.length > 0) {
+                    // close notification
+                   // notifications[0].close();                                    
+                  }                 
+                  else {
+                    // Create a new notification
+                    const notification = new Notification(event.user.name, {
+                      body: event.message?.text, 
+                      icon: "./public/favicon.png",
+                      tag: event.message?.id,
+                     // requireInteraction: true
+                    });
+                  }
+                });
+        }
+        });
+       });
+    }
+       
     return (
         <div className="team-channel-list">
             <div className="team-channel-list__header">

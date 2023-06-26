@@ -103,6 +103,7 @@ const ChannelListContent = ({ isCreating, setIsCreating, setCreateType, setIsEdi
                             type="team"
                         />
                     )}
+                    sendChannelsToList
                 />
                 <ChannelList 
                     filters={filters}
@@ -127,6 +128,7 @@ const ChannelListContent = ({ isCreating, setIsCreating, setCreateType, setIsEdi
                             type="messaging"
                         />
                     )}
+                    sendChannelsToList
                 />
             </div>
         </>

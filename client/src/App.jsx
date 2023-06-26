@@ -34,12 +34,55 @@ const App = () => {
     const [isCreating, setIsCreating] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [isEditingProfile, setIsEditingProfile] = useState(false);
+    const [showNotificationBanner, setShowNotificationBanner] = useState(false);
 
     if(!authToken) return <Auth />
 
+    if (Notification.permission === 'default')
+    {      
+    if (!showNotificationBanner)
+    setShowNotificationBanner(true);   }
+
+    function grantPermission() {        
+      if (Notification.permission === 'granted') {      
+       // toast.success('You are already subscribed to web notifications');
+        return;
+      }
+      
+      if (
+        Notification.permission === "denied" ||
+        Notification.permission === "default"
+      ) {
+        Notification.requestPermission().then(result => {
+          if (result === 'granted') {
+            window.location.reload();
+            new Notification('New message from Prithibi', {
+              body: 'Nice, notifications are now enabled!',
+              icon: "./public/favicon.png",
+            });
+          }
+        });
+      }
+      setShowNotificationBanner(false);
+    }
+
+    
+
     return (
-        <div className="app__wrapper">
-            <Chat client={client} theme="team" >
+        <div>
+            {showNotificationBanner && (
+                <div className="alert">
+                <p>
+                    Prithibi needs your permission to&nbsp;
+                    <button onClick={grantPermission}>
+                    enable desktop notifications
+                    </button>
+                </p>
+                </div>
+            )}          
+        <div className="app__wrapper">    
+        
+            <Chat client={client} theme="team" >            
                 <ChannelListContainer 
                     isCreating={isCreating}
                     setIsCreating={setIsCreating}
@@ -55,8 +98,9 @@ const App = () => {
                     isEditingProfile={isEditingProfile}
                     setIsEditingProfile={setIsEditingProfile}
                     createType={createType}
-                />
+                />                
             </Chat>
+        </div>
         </div>
     );
 }
