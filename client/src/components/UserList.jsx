@@ -27,12 +27,16 @@ const UserItem = ({ user, setSelectedUsers }) => {
 
         setSelected((prevSelected) => !prevSelected)
     }
-
+    console.log(window.location.href);
     return (
         <div className="user-item__wrapper" onClick={handleSelect}>
             <div className="user-item__name-wrapper">
-                <Avatar image={user.image} name={user.fullName || user.id} size={32} />
-                <p className="user-item__name">{user.fullName || user.id}</p>
+                <Avatar shape='circle' image={user.image} name={user.fullName || user.id} size={32} imageProps={{
+    style: {
+      borderRadius: 50,
+    },
+  }}/>
+                <p className="user-item__name ml-2">{user.fullName || user.id}</p>
             </div>
             {selected ? <InviteIcon /> : <div className="user-item__invite-empty" />}
         </div>

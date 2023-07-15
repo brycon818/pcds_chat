@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StreamChat } from 'stream-chat';
 import { Chat } from 'stream-chat-react';
 import Cookies from 'universal-cookie';
+import dotenv from "dotenv";
 
 import { ChannelListContainer, ChannelContainer, Auth, } from './components';
 
@@ -10,9 +11,12 @@ import 'stream-chat-react/dist/css/v2/index.css';
 //import 'stream-chat-react/dist/scss/v2/index.scss'
 import './App.css';
 
-const cookies = new Cookies();
+dotenv.config();
 
-const apiKey = '4c76954fycg4';
+const cookies = new Cookies();
+//import.meta.env.STREAM_API_KEY;
+//console.log(import.meta.env.STREAM_API_KEY);
+const apiKey =  process.env.REACT_APP_STREAM_API_KEY;
 const authToken = cookies.get("token");
 
 const client = StreamChat.getInstance(apiKey);
@@ -27,6 +31,7 @@ if(authToken) {
         phoneNumber: cookies.get('phoneNumber'),        
     }, authToken)
 }
+
 
 
 const App = () => {

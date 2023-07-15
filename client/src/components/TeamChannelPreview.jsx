@@ -3,25 +3,56 @@ import { Avatar, useChatContext } from 'stream-chat-react';
 
 const TeamChannelPreview = ({ setActiveChannel, setIsCreating, setIsEditing, setToggleContainer, channel, type }) => {
     const { channel: activeChannel, client } = useChatContext();
+    console.log(channel);
+    let unreadCount = "";
+    if ((channel.state.unreadCount > 0) && (channel.state.unreadCount < 10))
+       unreadCount = channel.state.unreadCount;
+    else if ((channel.state.unreadCount > 0) && (channel.state.unreadCount > 10))
+       unreadCount = "9+";
+          
 
     const ChannelPreview = () => (
-        <p className="channel-preview__item">
-            # {channel?.data?.name || channel?.data?.id}
-        </p>
+        <div className="channel-preview__item">
+            { (channel.state.unreadCount > 0 ) ?
+        <button data-count = {unreadCount}
+               className="button26 ">
+            # {channel?.data?.name || channel?.data?.id}                  
+        </button>  :
+           <button
+              className="button27 ">
+           # {channel?.data?.name || channel?.data?.id}                  
+           </button>  
+        }
+        </div>
     );
 
 
     const DirectPreview = () => {
         const members = Object.values(channel.state.members).filter(({ user }) => user.id !== client.userID);
-            
+       
+        let unreadCount = "";
+        if ((channel.state.unreadCount > 0) && (channel.state.unreadCount < 10))
+            unreadCount = channel.state.unreadCount;
+        else if ((channel.state.unreadCount > 0) && (channel.state.unreadCount > 10))
+            unreadCount = "9+";
+
         return (
-            <div className="channel-preview__item single">
+            <div className="flex channel-preview__item ">
                 <Avatar 
                     image={members[0]?.user?.image}
                     name={members[0]?.user?.fullName || members[0]?.user?.id}
                     size={24}
                 />
-                <p>{members[0]?.user?.fullName || members[0]?.user?.id}</p>
+                { (channel.state.unreadCount > 0 ) ?
+        <button data-count = {unreadCount}
+               className="button26 ">
+            {members[0]?.user?.fullName || members[0]?.user?.id}                 
+        </button>  :
+           <button
+              className="button27 ">
+           {members[0]?.user?.fullName || members[0]?.user?.id}                  
+           </button>  
+        }                
             </div>
         )
     }

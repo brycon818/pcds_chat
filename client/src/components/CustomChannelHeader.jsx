@@ -85,19 +85,19 @@ export function CustomChannelHeader  (props) {
              <div className="text-sm pt-2">
                 <ul >
                   <li className="font-bold flex">Channel Members:      
-                  {(client.user.role==='admin') && (
-                  <span style={{ display: 'flex' }} onClick={() => setIsEditing(true)}
-                        className="pl-2 cursor_pointer">
-                    <ChannelInfo />
-                    </span>              
-                  )}               
+                            
                   </li>
                   {members.map((member) => (
                     <li key={member?.user?.name}>                   
                     <span>{(member?.user?.fullName || member?.user?.name) } - </span>
                     <span className = {member?.user?.online ? "text-green-600" : "text-red-500"}>{member?.user?.online ? 'Online' : 'Offline'}</span>                  
-            </li>
-          ))}
+                  </li>                  
+                  ))}
+                  {(client.user.role==='admin') && (
+                  <div>                                  
+                    <button onClick={() => setIsEditing(true)}>Add Members</button>
+                  </div>              
+                  )}        
         </ul>   
   
              </div>

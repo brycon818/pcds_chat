@@ -46,6 +46,8 @@ const customChannelMessagingFilter = (channels) => {
     return channels.filter((channel) => channel.type === 'messaging');
 }
 
+
+
 const ChannelListContent = ({ isCreating, setIsCreating, setCreateType, setIsEditing, setToggleContainer, setIsEditingProfile }) => {
     const { client } = useChatContext();
 
@@ -62,7 +64,7 @@ const ChannelListContent = ({ isCreating, setIsCreating, setCreateType, setIsEdi
     }
 
     const editProfile = () => {
-        console.log("profile edit");
+        
         return (<div className="app__wrapper">Hello World!
                 <div>
                  <ProfileEdit />

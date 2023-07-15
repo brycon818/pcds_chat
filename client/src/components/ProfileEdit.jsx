@@ -34,6 +34,7 @@ const ProfileEdit = ({setIsEditingProfile}) => {
         { value: 'MAUI', label: 'MAUI' },
         { value: 'KAUAI', label: 'KAUAI' },
         { value: 'GSWC', label: 'GSWC' },
+        { value: 'PCDS', label: 'PCDS' },
       ];
    
     
@@ -200,8 +201,7 @@ const ProfileEdit = ({setIsEditingProfile}) => {
                                     type="text"
                                     placeholder="Avatar URL"
                                     value={form.avatarURL}
-                                    onChange={handleChange}
-                                    required
+                                    onChange={handleChange}                                    
                                 />
                             </div>
                         )}

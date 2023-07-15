@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, state} from 'react';
 import Cookies from 'universal-cookie';
 import axios from 'axios';
 
 import signinImage from '../assets/signup.jpg';
 import Select, { SelectInstance } from "react-select"
+import dotenv from "dotenv";
+
+dotenv.config();
 
 
 const cookies = new Cookies();
@@ -17,11 +20,16 @@ const initialState = {
     avatarURL: '',
 }
 
+
 const Auth = () => {
     const [form, setForm] = useState(initialState);
     const [isSignup, setIsSignup] = useState(false);
     const [selectedValues, setSelectedValues] = useState([]);
-
+    const [selectedFile, setSelectedFile] = useState(null); //file for the avatar
+    const [avatar, setAvatar] = useState(null); //stores actual filename of file on our server        
+    
+    var avatarFileName=null;
+   
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
@@ -37,6 +45,7 @@ const Auth = () => {
         { value: 'MAUI', label: 'MAUI' },
         { value: 'KAUAI', label: 'KAUAI' },
         { value: 'GSWC', label: 'GSWC' },
+        { value: 'PCDS', label: 'PCDS' },
       ];
 
     /*const memberIdsRef =
@@ -47,7 +56,8 @@ const Auth = () => {
 
         const { username, password, phoneNumber, avatarURL, email } = form;
 
-        const URL = 'http://localhost:5000/auth';
+        const URL = process.env.REACT_APP_BACKEND_URL + '/auth';
+        //const URL = 'http://129.146.52.58:5000/auth';
         // const URL = 'https://medical-pager.herokuapp.com/auth';
         
         
@@ -56,9 +66,16 @@ const Auth = () => {
             userTeams.push(selectedValues[i].value);
         }
         
+        if(isSignup) {
+            await onFileUpload();  
+            console.log("filename: " + avatarFileName);
+        }
+
         try {
             const { data: { token, userId, hashedPassword, fullName, role} } = await axios.post(`${URL}/${isSignup ? 'signup' : 'login'}`, {
-                username, password, fullName: form.fullName, phoneNumber, avatarURL, userTeams, email});
+                username, password, fullName: form.fullName, phoneNumber, 
+                image: avatarFileName,
+                userTeams, email});
 
             cookies.set('token', token);
             cookies.set('username', username);
@@ -69,20 +86,17 @@ const Auth = () => {
 
             if(isSignup) {
                 cookies.set('phoneNumber', phoneNumber);
-                cookies.set('avatarURL', avatarURL);
+                //cookies.set('avatarURL', avatarURL);
                 cookies.set('hashedPassword', hashedPassword);
             }
-
-            window.location.reload();
+            
+            window.location.reload();            
 
         }
         catch (error){
           alert("Unable to Login, check username and password.")  
           console.error('Error BCC:', error);
-        }
-
-        
-
+        }        
         
         
     }
@@ -90,6 +104,49 @@ const Auth = () => {
     const switchMode = () => {
         setIsSignup((prevIsSignup) => !prevIsSignup);
     }
+
+    
+    const handleFileSelect = (event) => {
+        setSelectedFile(event.target.files[0]);             
+      };
+                 
+
+    const onFileUpload = async () => {
+        if (selectedFile===null)
+           return;
+
+        console.log('backend: ' + process.env.REACT_APP_BACKEND_URL);  
+        const URL =  process.env.REACT_APP_BACKEND_URL + '/upload';
+ 
+        // Create an object of formData
+        const formData = new FormData();
+ 
+        // Update the formData object
+        formData.append(
+            "file",
+            selectedFile,
+            selectedFile.name                       
+        );
+ 
+        // Details of the uploaded file
+        console.log(selectedFile);
+ 
+        // Request made to the backend api
+        // Send formData object
+       // axios.post(`${URL}`, formData);
+        const response = await axios.post(`${URL}`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          });          
+      
+       setAvatar(response.data.filename);
+       
+       
+       console.log(response.data.filename);
+       avatarFileName = '/avatars/' + response.data.filename;
+       setSelectedFile(null);          
+    };  
 
     return (
         <div className="auth__form-container">
@@ -124,7 +181,7 @@ const Auth = () => {
                                 <label htmlFor="email">E-mail Address</label>
                                 <input 
                                     name="email" 
-                                    type="text"
+                                    type="email"
                                     placeholder="e-mail address"
                                     onChange={handleChange}
                                     required
@@ -162,14 +219,14 @@ const Auth = () => {
                         
                         {isSignup && (
                             <div className="auth__form-container_fields-content_input">
-                                <label htmlFor="avatarURL">Avatar URL</label>
+                                <label htmlFor="avatarURL">Avatar</label>
                                 <input 
                                     name="avatarURL" 
-                                    type="text"
-                                    placeholder="Avatar URL"
-                                    onChange={handleChange}
-                                    required
-                                />
+                                    type="file"
+                                    placeholder="Avatar"
+                                    accept="image/*"
+                                    onChange={handleFileSelect}                                    
+                                />                                
                             </div>
                         )}
                         <div className="auth__form-container_fields-content_input">

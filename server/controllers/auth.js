@@ -12,7 +12,7 @@ const app_id = process.env.STREAM_APP_ID;
 const signup = async (req, res) => {
     try {
         
-        const { fullName, username, password, phoneNumber, userTeams, email } = req.body;
+        const { fullName, username, password, phoneNumber, userTeams, email, image } = req.body;
 
         //const userId = crypto.randomBytes(16).toString('hex');
         const userId = username;
@@ -51,7 +51,8 @@ const signup = async (req, res) => {
             password : hashedPassword,
             email: email,
             phoneNumber : phoneNumber,
-            teams : userTeams,            
+            teams : userTeams,    
+            image: image        
         });
     
         const token = serverClient.createUserToken(userId);
@@ -74,9 +75,16 @@ const login = async (req, res) => {
         const { users } = await client.queryUsers({ name: username });
 
         if(!users.length) return res.status(400).json({ message: 'User not found' });
-
-        const success = await bcrypt.compare(password, users[0].hashedPassword);
-
+        
+        var success = false;
+        if ((password!==null) && (password!=='') && 
+            (users[0].hashedPassword !== null) && (users[0].hashedPassword !== undefined)){
+           try {
+                success = bcrypt.compare(password, users[0].hashedPassword);
+           } catch (error) {
+               console.log("bcrypt error: " + error); }
+        }
+        
         const token = serverClient.createUserToken(users[0].id);
 
         if(success) {

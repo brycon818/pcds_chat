@@ -5,6 +5,7 @@ import { AddChannel } from '../assets';
 import Cookies from 'universal-cookie';
 import { useChatContext } from 'stream-chat-react';
 
+
 const TeamChannelList = ({ setToggleContainer, children, error = false, loading, type, isCreating, setIsCreating, setCreateType, setIsEditing, loadedChannels }) => {   
     const { client } = useChatContext();
     if(error) {
@@ -48,10 +49,10 @@ const TeamChannelList = ({ setToggleContainer, children, error = false, loading,
                     // Create a new notification
                     const notification = new Notification(event.user.name, {
                       body: event.message?.text, 
-                      icon: "./public/favicon.png",
+                      icon: "./favicon.png",
                       tag: event.message?.id,
                      // requireInteraction: true
-                    });
+                    }).show;
                   }
                 });
         }

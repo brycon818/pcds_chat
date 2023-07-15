@@ -944,7 +944,7 @@
   
   .team-channel-list {
     width: 100%;
-    display: flex;
+    display: flex;    
     flex-direction: column;
   }
   
@@ -1844,7 +1844,7 @@
     --str-chat__channel-list-background-color: transparent;
     --str-chat__attachment-preview-image-background-color: transparent;
     --str-chat__avatar-border-radius: var(--str-chat__border-radius-circle);
-    --str-chat__avatar-background-color: transparent;
+    --str-chat__avatar-background-color: #2f3030;
     --str-chat__message-reactions-options-border-radius: 4px;
     --str-chat__message-reactions-options-background-color: #f1f1f1;  
     --str-chat__message-reactions-option-background-color: #f1f1f1;
@@ -1892,12 +1892,19 @@
   display: inline-block;
 }
 
+.circle-button {
+  border-radius: 50%;
+  margin: 5px;
+}
+
 .inline-flex {
   display: inline-flex;
 }
 
 .pt-2 { padding-top: 0.5rem; }
 .pb-2 { padding-bottom: 0.5rem; }
+
+.ml-2 { margin-left: 0.5rem; }
 
 .float-right {
   float: right;
@@ -1939,3 +1946,84 @@
   text-decoration: underline;
 }
 
+.button26 {
+  background: transparent;
+  border-radius: 0px;
+  box-shadow: none;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  font-family: Inter,Helvetica,"Apple Color Emoji","Segoe UI Emoji",NotoColorEmoji,"Noto Color Emoji","Segoe UI Symbol","Android Emoji",EmojiSymbols,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans",sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 24px;
+  opacity: 1;
+  outline: 0 solid transparent;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 0px;
+  
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: 100%;
+  white-space: nowrap;  
+  text-overflow: ellipsis;    
+  display: block;
+  border: 0;
+  position: relative;
+  text-align: left;
+}
+
+.button27 {
+  background: transparent;  
+  border-radius: 0px;
+  box-shadow: none;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  font-family: Inter,Helvetica,"Apple Color Emoji","Segoe UI Emoji",NotoColorEmoji,"Noto Color Emoji","Segoe UI Symbol","Android Emoji",EmojiSymbols,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans",sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 24px;
+  opacity: 1;
+  outline: 0 solid transparent;
+  padding: 5px 5px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;    
+  display: block;
+  border: 0;
+  position: relative;
+  text-align: left;
+}
+
+
+
+.button26:before {
+  content: attr(data-count);
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+  font-weight: 400;
+  font-size: 12px;
+  text-align: center;
+  display: block;
+  border-radius: 50%;
+  background: rgb(236, 5, 36);
+  border: 1px solid #FFF;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  color: #FFF;
+  position: absolute;
+  top: 2px;
+  right: -8px;
+}
+
+.button26.badge-top-right:before {
+  left: auto;
+  right: -1px;
+}

@@ -17,6 +17,21 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded() );
 
+const multer = require("multer");
+const path = require('path');
+
+const storage = multer.diskStorage({
+    destination: '../client/public/avatars/',
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      const ext = path.extname(file.originalname);
+      const fileName = file.originalname.replace(ext, '') + '-' + uniqueSuffix + ext;
+      cb(null, fileName);
+    }
+});
+
+const upload = multer({ storage });
+  
 //{extended: true}
 
 app.get('/', (req, res) => {
@@ -48,5 +63,20 @@ app.post('/', (req, res) => {
 });
 
 app.use('/auth', authRoutes);
+
+app.post('/upload', upload.single('file'), (req, res) => {
+    // Handle the uploaded file
+    const file = req.file;
+    
+    if (!file) {
+      res.status(400).json({ error: 'No file uploaded.' });
+      return;
+    }
+  
+    // Return a success response
+    res.json({ message: 'File uploaded successfully.',
+               filename: file.filename });
+  });
+  
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

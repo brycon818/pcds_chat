@@ -10,4 +10,5 @@ export { default as TeamMessage } from './TeamMessage';
 export { default as Auth } from './Auth';
 export { default as ProfileEdit } from './ProfileEdit';
 export { default as UserList } from './UserList';
+export { default as ChannelMembersList } from './ChannelMembersList';
 export { default as ResultsDropdown } from './ResultsDropdown';

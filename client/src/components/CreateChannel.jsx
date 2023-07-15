@@ -30,7 +30,7 @@ const CreateChannel = ({ createType, setIsCreating }) => {
 
         try {
             //previously has "await"
-            const newChannel =  client.channel(createType, channelName, {
+            const newChannel =  client.channel(createType, channelName.replace(/\s/g, ''), {
                 name: channelName, members: selectedUsers
             });
 
