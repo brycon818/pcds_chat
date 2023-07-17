@@ -48,7 +48,7 @@ const signup = async (req, res) => {
             role : userRole,         
             name : username, 
             fullName,
-            password : hashedPassword,
+            password : hashedPassword,            
             email: email,
             phoneNumber : phoneNumber,
             teams : userTeams,    
@@ -78,19 +78,19 @@ const login = async (req, res) => {
         
         var success = false;
         if ((password!==null) && (password!=='') && 
-            (users[0].hashedPassword !== null) && (users[0].hashedPassword !== undefined)){
+            (users[0].password !== null) && (users[0].password !== undefined)){
            try {
-                success = bcrypt.compare(password, users[0].hashedPassword);
+                success = bcrypt.compare(password, users[0].password);
            } catch (error) {
                console.log("bcrypt error: " + error); }
         }
         
         const token = serverClient.createUserToken(users[0].id);
-
-        if(success) {
+        
+        if(success) {            
             res.status(200).json({ token, fullName: users[0].fullName, username, userId: users[0].id, role: users[0].role});
         } else {
-            res.status(500).json({ message: 'Incorrect password' });
+            res.status(401).json({ message: 'Incorrect password' });
         }
     } catch (error) {
         console.log(error);
@@ -102,7 +102,7 @@ const login = async (req, res) => {
 const update = async (req, res) => {
     try {
         
-        const { fullName, username, password, phoneNumber, userTeams, email } = req.body;
+        const { fullName, username, password, phoneNumber, userTeams, email, image } = req.body;
         
         
         const userId = username;
@@ -143,7 +143,8 @@ const update = async (req, res) => {
             password : hashedPassword,
             email: email,
             phoneNumber : phoneNumber,
-            teams : userTeams,            
+            teams : userTeams,    
+            image : image        
         });
     
         const token = serverClient.createUserToken(userId);

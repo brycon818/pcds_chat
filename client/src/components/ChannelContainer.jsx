@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Channel, MessageSimple , Window } from 'stream-chat-react';
 
 import { ChannelInner, CreateChannel, EditChannel, ProfileEdit } from './';
 
 const ChannelContainer = ({ isCreating, setIsCreating, isEditing, setIsEditing, createType, isEditingProfile, setIsEditingProfile}) => {
+    const [pinsOpen, setPinsOpen] = useState(false);
     if(isCreating) {
         return (
             <div className="channel__container">
@@ -35,13 +36,20 @@ const ChannelContainer = ({ isCreating, setIsCreating, isEditing, setIsEditing, 
         </div>
     )
 
+    
     return (        
         <div className=" channel__container">                    
            <Channel
                 EmptyStateIndicator={EmptyState}
                 Message={(messageProps, i) => <MessageSimple key={i} {...messageProps} />}
             >
-                <ChannelInner setIsEditing={setIsEditing} />
+                <ChannelInner
+                    {...{                        
+                        setIsEditing,
+                        setIsEditingProfile,
+                    }}
+                    />
+                
             </Channel>               
         </div>
     );

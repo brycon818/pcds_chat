@@ -31,7 +31,7 @@ const CreateChannel = ({ createType, setIsCreating }) => {
         try {
             //previously has "await"
             const newChannel =  client.channel(createType, channelName.replace(/\s/g, ''), {
-                name: channelName, members: selectedUsers
+                name: channelName, members: selectedUsers, 
             });
 
             await newChannel.watch();
@@ -54,7 +54,7 @@ const CreateChannel = ({ createType, setIsCreating }) => {
             {createType === 'team' && <ChannelNameInput channelName={channelName} setChannelName={setChannelName}/>}
             <UserList setSelectedUsers={setSelectedUsers} />
             <div className="create-channel__button-wrapper" onClick={createChannel}>
-                <p>{createType === 'team' ? 'Create Channel' : 'Create Message Group'}</p>
+                <p>{createType === 'team' ? 'Create Channel' : 'Direct Message'}</p>
             </div>
         </div>
     )

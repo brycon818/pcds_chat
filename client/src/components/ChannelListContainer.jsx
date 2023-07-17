@@ -18,17 +18,8 @@ const SideBar = ({ logout, setIsEditingProfile }) => (
             <div className="icon1__inner">
                 <img src={PCDS_Logo} alt="Logo" width="40" />
             </div>
-        </div>        
-        <div className="channel-list__sidebar__icon2">
-            <div className="icon1__inner" onClick={() => setIsEditingProfile(true)}>
-                <img src={ProfileEditIcon} alt="Edit Profile" width="40" />
-            </div>
-        </div>
-        <div className="channel-list__sidebar__icon2">
-            <div className="icon1__inner" onClick={logout}>
-                <img src={LogoutIcon} alt="Logout" width="25" />
-            </div>
-        </div>
+        </div>                
+        
     </div>
 );
 
@@ -52,15 +43,20 @@ const ChannelListContent = ({ isCreating, setIsCreating, setCreateType, setIsEdi
     const { client } = useChatContext();
 
     const logout = () => {
-        cookies.remove("token");
-        cookies.remove('userId');
-        cookies.remove('username');
-        cookies.remove('fullName');
-        cookies.remove('avatarURL');
-        cookies.remove('hashedPassword');
-        cookies.remove('phoneNumber');
+        const confirmed = window.confirm('Are you sure you want to log out?');
+        
+        if (confirmed) {
 
-        window.location.reload();
+            cookies.remove("token");
+            cookies.remove('userId');
+            cookies.remove('username');
+            cookies.remove('fullName');
+            cookies.remove('avatarURL');
+            cookies.remove('hashedPassword');
+            cookies.remove('phoneNumber');
+
+            window.location.reload();
+        }
     }
 
     const editProfile = () => {

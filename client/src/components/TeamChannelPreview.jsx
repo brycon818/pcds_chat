@@ -3,7 +3,7 @@ import { Avatar, useChatContext } from 'stream-chat-react';
 
 const TeamChannelPreview = ({ setActiveChannel, setIsCreating, setIsEditing, setToggleContainer, channel, type }) => {
     const { channel: activeChannel, client } = useChatContext();
-    console.log(channel);
+    
     let unreadCount = "";
     if ((channel.state.unreadCount > 0) && (channel.state.unreadCount < 10))
        unreadCount = channel.state.unreadCount;
@@ -15,11 +15,11 @@ const TeamChannelPreview = ({ setActiveChannel, setIsCreating, setIsEditing, set
         <div className="channel-preview__item">
             { (channel.state.unreadCount > 0 ) ?
         <button data-count = {unreadCount}
-               className="button26 ">
+               className={channel.data.hotline == "1" ? "button29" : "button26"}>
             # {channel?.data?.name || channel?.data?.id}                  
         </button>  :
            <button
-              className="button27 ">
+              className={channel.data.hotline == "1" ? "button28" : "button27"}>
            # {channel?.data?.name || channel?.data?.id}                  
            </button>  
         }
@@ -29,7 +29,7 @@ const TeamChannelPreview = ({ setActiveChannel, setIsCreating, setIsEditing, set
 
     const DirectPreview = () => {
         const members = Object.values(channel.state.members).filter(({ user }) => user.id !== client.userID);
-       
+        
         let unreadCount = "";
         if ((channel.state.unreadCount > 0) && (channel.state.unreadCount < 10))
             unreadCount = channel.state.unreadCount;
@@ -45,7 +45,7 @@ const TeamChannelPreview = ({ setActiveChannel, setIsCreating, setIsEditing, set
                 />
                 { (channel.state.unreadCount > 0 ) ?
         <button data-count = {unreadCount}
-               className="button26 ">
+               className="button26">
             {members[0]?.user?.fullName || members[0]?.user?.id}                 
         </button>  :
            <button

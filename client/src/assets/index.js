@@ -5,3 +5,5 @@ export { CloseEditProfile } from './CloseEditProfile';
 export { InviteIcon } from './InviteIcon';
 export { LightningBolt } from './LightningBolt';
 export { SearchIcon } from './SearchIcon';
+export { PinIcon } from './PinIcon';
+export { CloseThreadIcon } from './CloseThreadIcon';

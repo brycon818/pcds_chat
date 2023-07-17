@@ -7,7 +7,7 @@ import Select, {setSelectedValues} from "react-select"
 
 import { CloseEditProfile } from '../assets';
 import { useChatContext } from "stream-chat-react/dist/context"    
-
+import dotenv from "dotenv";
 
 const cookies = new Cookies();   
     
@@ -45,7 +45,12 @@ const ProfileEdit = ({setIsEditingProfile}) => {
     }
         
     const [selectedValues, setSelectedValues] = useState(initialOptions);
-        
+    
+    
+    const [selectedFile, setSelectedFile] = useState(null); //file for the avatar
+    const [avatar, setAvatar] = useState(null); //stores actual filename of file on our server        
+    
+    var avatarFileName=null;
 
     const handleChange = (e) => {
         setForm({...form, [e.target.name]: e.target.value });
@@ -55,7 +60,50 @@ const ProfileEdit = ({setIsEditingProfile}) => {
         setSelectedValues(selectedOptions);       
       };
 
-    
+      const handleFileSelect = (event) => {
+        setSelectedFile(event.target.files[0]);             
+      };
+                 
+
+    const onFileUpload = async () => {
+        if (selectedFile===null)
+           return;
+
+        console.log('backend: ' + process.env.REACT_APP_BACKEND_URL);  
+        const URL =  process.env.REACT_APP_BACKEND_URL + '/upload';
+ 
+        // Create an object of formData
+        const formData = new FormData();
+ 
+        // Update the formData object
+        formData.append(
+            "file",
+            selectedFile,
+            selectedFile.name                       
+        );
+ 
+        // Details of the uploaded file
+        console.log(selectedFile);
+ 
+        // Request made to the backend api
+        // Send formData object
+       // axios.post(`${URL}`, formData);
+        const response = await axios.post(`${URL}`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          });          
+      
+       setAvatar(response.data.filename);
+       
+       
+       if (response.data.filename !== null)
+          avatarFileName = '/avatars/' + response.data.filename;
+       else 
+          avatarFileName = client.user.avatarURL;          
+       setSelectedFile(null);          
+    };  
+
     /*const memberIdsRef =
       useRef<SelectInstance<{ label: string, value: string }>>(null)  ;*/
 
@@ -64,7 +112,8 @@ const ProfileEdit = ({setIsEditingProfile}) => {
 
         //let { username, fullName, password, phoneNumber, avatarURL, email } = form;
 
-        const URL = 'http://localhost:5000/auth';
+        const URL = process.env.REACT_APP_BACKEND_URL + '/auth';
+        //const URL = 'http://localhost:5000/auth';
         // const URL = 'https://medical-pager.herokuapp.com/auth';
         
         
@@ -77,13 +126,14 @@ const ProfileEdit = ({setIsEditingProfile}) => {
         const phoneNumber = (form.phoneNumber || client.user.phoneNumber);
         const email = (form.email || client.user.email);
         const avatarURL = (form.avatarURL || client.user.avatarURL);
-        const password = form.password;
+        const password = (form.password || client.user.password);
         const username = client.user.name;
 
-        
+        await onFileUpload();
+
         try {
-            const { data: { token, userId, hashedPassword, fullName, role} } = await axios.post(`${URL}/${isSignup ? 'update' : 'login'}`, {
-                username : client.user.name, password, fullName : fullName1, phoneNumber, avatarURL, userTeams, email});
+            const { data: { token, userId, password, fullName, role} } = await axios.post(`${URL}/${isSignup ? 'update' : 'login'}`, {
+                username : client.user.name, password, fullName : fullName1, phoneNumber, image: avatarFileName, userTeams, email});
 
             cookies.set('token', token);
             cookies.set('username', username);
@@ -95,7 +145,7 @@ const ProfileEdit = ({setIsEditingProfile}) => {
             if(isSignup) {
                 cookies.set('phoneNumber', phoneNumber);
                 cookies.set('avatarURL', avatarURL);
-                cookies.set('hashedPassword', hashedPassword);
+                cookies.set('hashedPassword', password);
             }
 
             window.location.reload();
@@ -115,7 +165,7 @@ const ProfileEdit = ({setIsEditingProfile}) => {
     }
 
     //auth__form-container_fields-content
-    
+    console.log('inside ProfileEdit.jsx');
     return (
         <div className="auth__form-container2">
             <div className="auth__form-container_fields bg-gray-100">
@@ -195,14 +245,14 @@ const ProfileEdit = ({setIsEditingProfile}) => {
                         
                         {isSignup && (
                             <div className="auth__form-container_fields-content_input">
-                                <label htmlFor="avatarURL">Avatar URL</label>
+                                <label htmlFor="avatarURL">Avatar</label>
                                 <input 
                                     name="avatarURL" 
-                                    type="text"
-                                    placeholder="Avatar URL"
-                                    value={form.avatarURL}
-                                    onChange={handleChange}                                    
-                                />
+                                    type="file"
+                                    placeholder="Avatar"
+                                    accept="image/*"
+                                    onChange={handleFileSelect}                                    
+                                />        
                             </div>
                         )}
                         <div className="auth__form-container_fields-content_input">
