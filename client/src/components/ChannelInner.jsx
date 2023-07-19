@@ -3,12 +3,13 @@ import { MessageList, MessageInput, Thread, Window, useChannelActionContext, Ava
 
 import { ChannelInfo } from '../assets';
 import { CustomChannelHeader } from './CustomChannelHeader.jsx';
+import { PinnedMessageList } from './PinnedMessageList/PinnedMessageList.js';
 
 
 export const GiphyContext = React.createContext({});
 
 const ChannelInner = (props) => {
-  const { pinsOpen, setIsEditing, setIsEditingProfile } = props;
+  const { pinsOpen, setIsEditing, setIsEditingProfile, setPinsOpen } = props;
   const [giphyState, setGiphyState] = useState(false);
   const { sendMessage } = useChannelActionContext();
   
@@ -35,12 +36,12 @@ const ChannelInner = (props) => {
     <GiphyContext.Provider value={{ giphyState, setGiphyState }}>
       <div style={{ display: 'flex', width: '100%' }}>
         <Window>
-          <CustomChannelHeader setIsEditing={setIsEditing} setIsEditingProfile={setIsEditingProfile} />                    
+          <CustomChannelHeader setIsEditing={setIsEditing} setIsEditingProfile={setIsEditingProfile} setPinsOpen={setPinsOpen} />                    
           <MessageList />
-          <MessageInput grow overrideSubmitHandler={overrideSubmitHandler} />
+          <MessageInput grow overrideSubmitHandler={overrideSubmitHandler} />          
         </Window>
         <Thread />
-       
+        {pinsOpen && <PinnedMessageList setPinsOpen={setPinsOpen} />}
       </div>
     </GiphyContext.Provider>
   );

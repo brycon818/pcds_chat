@@ -47,6 +47,8 @@ const ChannelContainer = ({ isCreating, setIsCreating, isEditing, setIsEditing, 
                     {...{                        
                         setIsEditing,
                         setIsEditingProfile,
+                        setPinsOpen,
+                        pinsOpen
                     }}
                     />
                 

@@ -31,6 +31,7 @@ import {
 
   import LogoutIcon from '../assets/logout.png'
   import ProfileEditIcon from '../assets/profile_edit.png'
+  import PinIcon from '../assets/pin_22.png'
   import { ProfileEdit, ChannelContainer } from './';
 
   import Cookies from 'universal-cookie';
@@ -38,13 +39,13 @@ import {
   const cookies = new Cookies();
   
 export function CustomChannelHeader  (props) {
-    const { title, setIsEditing, setIsEditingProfile } = props;
+    const { title, setIsEditing, setIsEditingProfile, setPinsOpen } = props;
     //const navigate = useNavigate()
   
     const { channel, watcher_count } = useChannelStateContext();
     const { name } = channel.data || {};  
     const { client } = useChatContext();
-    
+    const { closeThread } = useChannelActionContext();
                    
   
     const getWatcherText = (watchers) => {
@@ -151,16 +152,24 @@ export function CustomChannelHeader  (props) {
                   </div>                              
               </div> 
               <div className="flex ml-auto">
-              <div className="logout_button__icon3">
-                 <div className="icon1__inner" onClick={() => setIsEditingProfile(true)} >
-                    <img src={ProfileEditIcon} alt="Edit Profile" width="40" />
-                </div>
-              </div>
-              <div className="logout_button__icon3">              
-                <div className="icon1__inner" onClick={logout}>
-                    <img src={LogoutIcon} alt="Logout" width="25" />
-                </div>
-            </div>                          
+                  <div className="logout_button__icon3">
+                    <div className="icon1__inner" onClick={(e) => {
+                                                      closeThread(e);
+                                                      setPinsOpen((prevState) => !prevState);
+                                                    }} >
+                        <img src={PinIcon} alt="Pinned Messages" width="24" />
+                    </div>
+                  </div>                  
+                  <div className="logout_button__icon3">                 
+                    <div className="icon1__inner" onClick={() => setIsEditingProfile(true)} >
+                        <img src={ProfileEditIcon} alt="Edit Profile" width="40" />
+                    </div>
+                  </div>
+                  <div className="logout_button__icon3">              
+                    <div className="icon1__inner" onClick={logout}>
+                        <img src={LogoutIcon} alt="Logout" width="25" />
+                    </div>
+                </div>                          
           </div>     
           </div>
           </div>
@@ -239,6 +248,14 @@ export function CustomChannelHeader  (props) {
             {getWatcherText(watcher_count)}
           </div> </div>
           <div className="flex ml-auto">
+              <div className="logout_button__icon3">
+                 <div className="icon1__inner" onClick={(e) => {
+                                                  closeThread(e);
+                                                  setPinsOpen((prevState) => !prevState);
+                                                }} >
+                    <img src={PinIcon} alt="Pinned Messages" width="24" />
+                </div>
+              </div>
               <div className="logout_button__icon3">
                  <div className="icon1__inner" onClick={() => setIsEditingProfile(true)} >
                     <img src={ProfileEditIcon} alt="Edit Profile" width="40" />
