@@ -1,6 +1,6 @@
 .pinned-messages__container {
   height: 100%;
-  width: 30%;
+  width: 35vw;
   box-shadow: inset 1px 0px 0px rgba(0, 0, 0, 0.1);
   z-index: 1;
   background: #ffffff;
@@ -44,11 +44,11 @@
 }
 
 .pinned-messages__list .str-chat__message-replies-count-button {
-  display: none;
+  display: flex;
 }
 
 .pinned-messages__list .str-chat__message-team .str-chat__message-team-actions {
-  display: none;
+  display: flex;
 }
 
 div.pinned-messages__header > button {
