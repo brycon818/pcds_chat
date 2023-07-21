@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Avatar, useChatContext } from 'stream-chat-react';
 
 const TeamChannelPreview = ({ setActiveChannel, setIsCreating, setIsEditing, setToggleContainer, channel, type }) => {
     const { channel: activeChannel, client } = useChatContext();
+    const [count, setCount] = useState(0);
     
     let unreadCount = "";
     if ((channel.state.unreadCount > 0) && (channel.state.unreadCount < 10))
@@ -15,7 +16,8 @@ const TeamChannelPreview = ({ setActiveChannel, setIsCreating, setIsEditing, set
         <div className="channel-preview__item">
             { (channel.state.unreadCount > 0 ) ?
         <button data-count = {unreadCount}
-               className={channel.data.hotline == "1" ? "button29" : "button26"}>
+               className={channel.data.hotline == "1" ? "button29" : "button26"}               
+               >
             # {channel?.data?.name || channel?.data?.id}                  
         </button>  :
            <button
@@ -67,6 +69,7 @@ const TeamChannelPreview = ({ setActiveChannel, setIsCreating, setIsEditing, set
             setIsCreating(false);
             setIsEditing(false);
             setActiveChannel(channel);
+            setCount(count + 1);
             if(setToggleContainer) {
                 setToggleContainer((prevState) => !prevState)
             }

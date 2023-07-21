@@ -7,3 +7,4 @@ export { LightningBolt } from './LightningBolt';
 export { SearchIcon } from './SearchIcon';
 export { PinIcon } from './PinIcon';
 export { CloseThreadIcon } from './CloseThreadIcon';
+export { RemoveChannel } from './RemoveChannel';

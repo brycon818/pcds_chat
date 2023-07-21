@@ -1,42 +1,51 @@
-import React, { useState, state} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Cookies from 'universal-cookie';
 import axios from 'axios';
 
 import signinImage from '../assets/signup.jpg';
-import Select, { SelectInstance } from "react-select"
+import Select from "react-select"
 import dotenv from "dotenv";
+import AlertWindow from './AlertWindow';
+
+
 
 dotenv.config();
-
 
 const cookies = new Cookies();
 
 const initialState = {
     fullName: '',
-    username: '',
+    username: 'pcds-admin',
     password: '',
     confirmPassword: '',
     phoneNumber: '',
     avatarURL: '',
-}
+};
 
 
 const Auth = () => {
     const [form, setForm] = useState(initialState);
     const [isSignup, setIsSignup] = useState(false);
     const [selectedValues, setSelectedValues] = useState([]);
-    const [selectedFile, setSelectedFile] = useState(null); //file for the avatar
-    const [avatar, setAvatar] = useState(null); //stores actual filename of file on our server        
-    
+    const [selectedFile, setSelectedFile] = useState(null); //file for the avatar    
+    const [showAlert, setShowAlert] = useState(false);
+            
     var avatarFileName=null;
-   
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
+
     
+   
+    const handleChange = (e) => {               
+       setForm({ ...form, [e.target.name]: e.target.value });              
+    };
+
+    
+    
+      const handleCloseAlert = () => {
+        setShowAlert(false);
+      };
 
     const handleSelectChange = (selectedOptions) => {
-        setSelectedValues(selectedOptions);
+       setSelectedValues(selectedOptions);       
       };
 
     const teamOptions = [
@@ -48,13 +57,17 @@ const Auth = () => {
         { value: 'PCDS', label: 'PCDS' },
       ];
 
-    /*const memberIdsRef =
-      useRef<SelectInstance<{ label: string, value: string }>>(null)  ;*/
+    
+    const domUsername = useRef();
+    const domPassword = useRef();
 
+    
     const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        const { username, password, phoneNumber, avatarURL, email } = form;
+        e.preventDefault();        
+        
+        const { username, password, phoneNumber, email } = form;        
+       
+        
 
         const URL = process.env.REACT_APP_BACKEND_URL + '/auth';
         //const URL = 'http://129.146.52.58:5000/auth';
@@ -70,12 +83,16 @@ const Auth = () => {
             await onFileUpload();  
             console.log("filename: " + avatarFileName);
         }
-
+//
         try {
             const { data: { token, userId, hashedPassword, fullName, role} } = await axios.post(`${URL}/${isSignup ? 'signup' : 'login'}`, {
-                username, password, fullName: form.fullName, phoneNumber, 
+                username, 
+                password,
+                phoneNumber, 
                 image: avatarFileName,
-                userTeams, email});
+                userTeams, email,
+                fullName: form.fullName,
+                });
 
             cookies.set('token', token);
             cookies.set('username', username);
@@ -89,13 +106,15 @@ const Auth = () => {
                 //cookies.set('avatarURL', avatarURL);
                 cookies.set('hashedPassword', hashedPassword);
             }
-            
+         
             window.location.reload();            
 
         }
         catch (error){
-          alert("Unable to Login, check username and password.")  
-          console.error('Error BCC:', error);
+         // alert("Unable to Login, check username and password.")  
+         // console.error('Error BCC:', error);          
+         // window.location.reload();
+         setShowAlert(true);
         }        
         
         
@@ -140,10 +159,6 @@ const Auth = () => {
             }
           });          
       
-       setAvatar(response.data.filename);
-       
-       
-       console.log(response.data.filename);
        avatarFileName = '/avatars/' + response.data.filename;
        setSelectedFile(null);          
     };  
@@ -153,7 +168,7 @@ const Auth = () => {
             <div className="auth__form-container_fields">
                 <div className="auth__form-container_fields-content">
                     <p>{isSignup ? 'Sign Up' : 'Sign In'}</p>
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit}>                    
                         {isSignup && (
                             <div className="auth__form-container_fields-content_input">
                                 <label htmlFor="fullName">Full Name</label>
@@ -170,10 +185,13 @@ const Auth = () => {
                             <label htmlFor="username">Username</label>
                                 <input 
                                     name="username" 
+                                    id="username"
+                                    ref={domUsername}
                                     type="text"
                                     placeholder="Username"
-                                    onChange={handleChange}
-                                    required
+                                    onChange={handleChange}                                    
+                                    required    
+                                    autoFocus                                
                                 />
                         </div>
                         {isSignup && (
@@ -221,7 +239,7 @@ const Auth = () => {
                             <div className="auth__form-container_fields-content_input">
                                 <label htmlFor="avatarURL">Avatar</label>
                                 <input 
-                                    name="avatarURL" 
+                                    name="avatarURL"                                     
                                     type="file"
                                     placeholder="Avatar"
                                     accept="image/*"
@@ -234,6 +252,7 @@ const Auth = () => {
                                 <input 
                                     name="password" 
                                     type="password"
+                                    ref={domPassword}
                                     placeholder="Password"
                                     onChange={handleChange}
                                     required
@@ -271,6 +290,11 @@ const Auth = () => {
             <div className="auth__form-container_image">
                 <img src={signinImage} alt="sign in" />
             </div>
+            <AlertWindow
+                isOpen={showAlert}
+                message="Invalid Username or Password."
+                onClose={handleCloseAlert}
+            />
         </div>
     )
 }

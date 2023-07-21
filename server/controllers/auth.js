@@ -74,18 +74,22 @@ const login = async (req, res) => {
 
         const { users } = await client.queryUsers({ name: username });
 
-        if(!users.length) return res.status(400).json({ message: 'User not found' });
+        if(!users.length) return res.status(401).json({ message: 'User not found' });
         
         var success = false;
         if ((password!==null) && (password!=='') && 
             (users[0].password !== null) && (users[0].password !== undefined)){
            try {
-                success = bcrypt.compare(password, users[0].password);
+                success = await bcrypt.compare(password, users[0].password);                
            } catch (error) {
                console.log("bcrypt error: " + error); }
         }
+        var token = null;
         
-        const token = serverClient.createUserToken(users[0].id);
+        console.log(success);
+        if (success) {            
+            token = serverClient.createUserToken(users[0].id);
+        }
         
         if(success) {            
             res.status(200).json({ token, fullName: users[0].fullName, username, userId: users[0].id, role: users[0].role});

@@ -35,11 +35,14 @@ import {
   import { ProfileEdit, ChannelContainer } from './';
 
   import Cookies from 'universal-cookie';
+  import ConfirmModal from './ConfirmModal';
 
   const cookies = new Cookies();
   
 export function CustomChannelHeader  (props) {
     const { title, setIsEditing, setIsEditingProfile, setPinsOpen } = props;
+    const [showConfirm, setShowConfirm] = useState(false);
+    const [showConfirmRemCh, setShowConfirmRemCh] = useState(false);
     //const navigate = useNavigate()
   
     const { channel, watcher_count } = useChannelStateContext();
@@ -93,7 +96,8 @@ export function CustomChannelHeader  (props) {
     };
 
     const logout = () => {
-      const confirmed = window.confirm('Are you sure you want to log out?');
+      //const confirmed = window.confirm('Are you sure you want to log out?');
+      const confirmed=true;
       
       if (confirmed) {
 
@@ -104,6 +108,7 @@ export function CustomChannelHeader  (props) {
           cookies.remove('avatarURL');
           cookies.remove('hashedPassword');
           cookies.remove('phoneNumber');
+          cookies.remove('role');
 
           window.location.reload();
       }
@@ -111,9 +116,7 @@ export function CustomChannelHeader  (props) {
     
     const [page, setPage] = useState("profile");
 
-    const editProfile = () => {                    
-            
-            
+    const editProfile = () => {                                            
       return (
                <ChannelContainer 
                   isEditingProfile={true}
@@ -121,6 +124,27 @@ export function CustomChannelHeader  (props) {
               );
               
     }
+
+    const handleConfirm = () => {
+      // Perform the action to be taken on confirmation
+      console.log('Confirmed!');
+      setShowConfirm(false);
+      logout();
+    };
+
+    const handleConfirmRemCh  = async () => {
+      // Perform the action to be taken on confirmation
+      console.log('Confirmed!');
+      setShowConfirmRemCh(false);     
+      const destroy = await channel.delete(); 
+    };
+  
+    const handleCancel = () => {
+      // Perform the action to be taken on cancellation
+      console.log('Cancelled!');
+      setShowConfirm(false);
+      setShowConfirmRemCh(false);
+    };
   
     
    if (channel?.data?.type==="team") {
@@ -166,7 +190,7 @@ export function CustomChannelHeader  (props) {
                     </div>
                   </div>
                   <div className="logout_button__icon3">              
-                    <div className="icon1__inner" onClick={logout}>
+                    <div className="icon1__inner" onClick={()=>setShowConfirm(true)}>
                         <img src={LogoutIcon} alt="Logout" width="25" />
                     </div>
                 </div>                          
@@ -174,16 +198,19 @@ export function CustomChannelHeader  (props) {
           </div>
           </div>
           {clicked && (
-             <div className="text-sm pt-2 pb-2 bg-gray-200">
+             <div className="text-sm pt-2 pb-2 bg-gray-200 ">
                 <ul >
                   <li className="font-bold flex">Channel Members:      
                             
                   </li>
                   {members.map((member) => (
-                    <li key={member?.user?.name}>                   
+                    <li key={member?.user?.name}>  
+                    <div className="members_grid">
+                    <div>
                     <span>{(member?.user?.fullName || member?.user?.name) } - </span>
-                    <span className = {member?.user?.online ? "text-green-600" : "text-red-500"}>{member?.user?.online ? 'Online' : 'Offline'}</span>
-                    
+                    <span className = {member.user.online ? "text-green-600" : "text-red-500"}>{member.user.online ? 'Online' : 'Offline'}</span>
+                    </div>                 
+                    <div>
                     { (client.userID!==member.user.id) && 
                         (<button className = "remove_member"
                                onClick = {(e) => {
@@ -198,13 +225,16 @@ export function CustomChannelHeader  (props) {
                                 createDM(`${member.user.id}`);
                                }}
                         > Message
-                        </button>)                 
+                        </button>)                                         
                     }
+                    </div>
+                    </div>
                   </li>                  
                   ))}
                   {(client.user.role==='admin') && (
-                  <div>                                  
-                    <button onClick={() => setIsEditing(true)}>Add Members</button>
+                  <div className="flex mt-2">                                  
+                    <button onClick={() => setIsEditing(true)}>Add Members</button>                    
+                    <button className="ml-2" onClick={() => setShowConfirmRemCh(true)}>Remove this Channel</button>
                   </div>              
                   )}        
         </ul>   
@@ -213,8 +243,20 @@ export function CustomChannelHeader  (props) {
           )
           }
           </div>
-          
-          
+          { (showConfirm) && (
+          <ConfirmModal
+        isOpen={showConfirm}
+        message="Are you sure you want to logout?"
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+      />)}
+         { (showConfirmRemCh) && (
+          <ConfirmModal
+        isOpen={showConfirmRemCh}
+        message = {"Are you sure you want to remove channel: " + channel.data.name + "?"}
+        onConfirm={handleConfirmRemCh}
+        onCancel={handleCancel}
+      />)} 
         </div>
       );
    }
@@ -262,13 +304,19 @@ export function CustomChannelHeader  (props) {
                 </div>
               </div>
               <div className="logout_button__icon3">              
-                <div className="icon1__inner" onClick={logout}>
+                <div className="icon1__inner" onClick={()=>setShowConfirm(true)}>
                     <img src={LogoutIcon} alt="Logout" width="25" />
                 </div>
             </div>                          
           </div>    
       </div>
-      
+      { (showConfirm) && (
+          <ConfirmModal
+        isOpen={showConfirm}
+        message="Are you sure you want to logout?"
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+      />)}
       </div>
     );
    }

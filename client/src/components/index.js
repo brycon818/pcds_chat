@@ -12,3 +12,5 @@ export { default as ProfileEdit } from './ProfileEdit';
 export { default as UserList } from './UserList';
 export { default as ChannelMembersList } from './ChannelMembersList';
 export { default as ResultsDropdown } from './ResultsDropdown';
+export { default as AlertWindow } from './AlertWindow';
+export { default as ConfirmModal } from './ConfirmModal';

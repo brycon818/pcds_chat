@@ -34,11 +34,12 @@ const ChannelInner = (props) => {
 
   return (
     <GiphyContext.Provider value={{ giphyState, setGiphyState }}>
-      <div style={{ display: 'flex', width: '100%' }}>
+      <div style={{ display: 'flex', width: '100%' }}           
+      >
         <Window>
           <CustomChannelHeader setIsEditing={setIsEditing} setIsEditingProfile={setIsEditingProfile} setPinsOpen={setPinsOpen} />                    
-          <MessageList />
-          <MessageInput grow overrideSubmitHandler={overrideSubmitHandler} />          
+          <MessageList  />
+          <MessageInput grow overrideSubmitHandler={overrideSubmitHandler}  />          
         </Window>
         <Thread />
         {pinsOpen && <PinnedMessageList setPinsOpen={setPinsOpen} />}

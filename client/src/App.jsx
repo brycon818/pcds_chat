@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { StreamChat } from 'stream-chat';
 import { Chat } from 'stream-chat-react';
 import Cookies from 'universal-cookie';
@@ -14,8 +14,7 @@ import './App.css';
 dotenv.config();
 
 const cookies = new Cookies();
-//import.meta.env.STREAM_API_KEY;
-//console.log(import.meta.env.STREAM_API_KEY);
+
 const apiKey =  process.env.REACT_APP_STREAM_API_KEY;
 const authToken = cookies.get("token");
 
@@ -33,15 +32,16 @@ if(authToken) {
 }
 
 
-
 const App = () => {
     const [createType, setCreateType] = useState('');
     const [isCreating, setIsCreating] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [isEditingProfile, setIsEditingProfile] = useState(false);
     const [showNotificationBanner, setShowNotificationBanner] = useState(false);
+    const [isInvalidLogin, setIsinvalidLogin] = useState(false);     
 
     if(!authToken) return <Auth />
+
 
     if (Notification.permission === 'default')
     {      
@@ -78,7 +78,7 @@ const App = () => {
             {showNotificationBanner && (
                 <div className="alert">
                 <p>
-                    Prithibi needs your permission to&nbsp;
+                    PriChat needs your permission to&nbsp;
                     <button onClick={grantPermission}>
                     enable desktop notifications
                     </button>
