@@ -86,7 +86,7 @@ const login = async (req, res) => {
         }
         var token = null;
         
-        console.log(success);
+        
         if (success) {            
             token = serverClient.createUserToken(users[0].id);
         }

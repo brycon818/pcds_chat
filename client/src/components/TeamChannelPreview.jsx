@@ -1,21 +1,45 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Avatar, useChatContext } from 'stream-chat-react';
+
+
 
 const TeamChannelPreview = ({ setActiveChannel, setIsCreating, setIsEditing, setToggleContainer, channel, type }) => {
     const { channel: activeChannel, client } = useChatContext();
     const [count, setCount] = useState(0);
-    
-    let unreadCount = "";
-    if ((channel.state.unreadCount > 0) && (channel.state.unreadCount < 10))
-       unreadCount = channel.state.unreadCount;
-    else if ((channel.state.unreadCount > 0) && (channel.state.unreadCount > 10))
-       unreadCount = "9+";
-          
+    const [newMessageCount, setNewMessageCount] = useState(0);
+        
+    useEffect(() => {
+        var timerID = setInterval(() => {
+            setNewMessageCount(channel.state.unreadCount);
+        }, 2000);
+     
+        return () => clearInterval(timerID);
+      },[]);
 
-    const ChannelPreview = () => (
+    const ChannelPreview = () => {
+        /*var unreadCount = "";
+        if ((channel.state.unreadCount > 0) && (channel.state.unreadCount < 10))
+           unreadCount = channel.state.unreadCount;
+        else if ((channel.state.unreadCount > 0) && (channel.state.unreadCount > 10))
+           unreadCount = "9+";                   */
+
+           var unreadCount = "";
+           if ((newMessageCount > 0) && (newMessageCount < 10))
+              unreadCount = newMessageCount;
+           else if ((newMessageCount > 0) && (newMessageCount > 10))
+              unreadCount = "9+";                             
+        
+
+        
+
+        return (
         <div className="channel-preview__item">
-            { (channel.state.unreadCount > 0 ) ?
+            { (unreadCount !=="" ) ?
         <button data-count = {unreadCount}
+            onClick={() => {                
+                unreadCount = "";              
+                setCount(count+1);                      
+               }}  
                className={channel.data.hotline == "1" ? "button29" : "button26"}               
                >
             # {channel?.data?.name || channel?.data?.id}                  
@@ -26,17 +50,20 @@ const TeamChannelPreview = ({ setActiveChannel, setIsCreating, setIsEditing, set
            </button>  
         }
         </div>
-    );
+        )
+    };
 
 
     const DirectPreview = () => {
         const members = Object.values(channel.state.members).filter(({ user }) => user.id !== client.userID);
-        
-        let unreadCount = "";
-        if ((channel.state.unreadCount > 0) && (channel.state.unreadCount < 10))
-            unreadCount = channel.state.unreadCount;
-        else if ((channel.state.unreadCount > 0) && (channel.state.unreadCount > 10))
-            unreadCount = "9+";
+                
+
+            var unreadCount = "";
+            if ((newMessageCount > 0) && (newMessageCount < 10))
+               unreadCount = newMessageCount;
+            else if ((newMessageCount > 0) && (newMessageCount > 10))
+               unreadCount = "9+";          
+            
 
         return (
             <div className="flex channel-preview__item ">
@@ -45,9 +72,14 @@ const TeamChannelPreview = ({ setActiveChannel, setIsCreating, setIsEditing, set
                     name={members[0]?.user?.fullName || members[0]?.user?.id}
                     size={24}
                 />
-                { (channel.state.unreadCount > 0 ) ?
+                { (unreadCount !=="" ) ?
         <button data-count = {unreadCount}
-               className="button26">
+               className="button26"
+               onClick={() => {
+                unreadCount = "";              
+                setCount(count+1);                
+               }}  
+               >
             {members[0]?.user?.fullName || members[0]?.user?.id}                 
         </button>  :
            <button
@@ -66,10 +98,10 @@ const TeamChannelPreview = ({ setActiveChannel, setIsCreating, setIsEditing, set
                 : 'channel-preview__wrapper'
         }
         onClick={() => {
+            setCount(1); 
             setIsCreating(false);
-            setIsEditing(false);
-            setActiveChannel(channel);
-            setCount(count + 1);
+            setIsEditing(false);                       
+            setActiveChannel(channel);             
             if(setToggleContainer) {
                 setToggleContainer((prevState) => !prevState)
             }
