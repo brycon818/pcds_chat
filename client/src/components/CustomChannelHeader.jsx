@@ -49,7 +49,7 @@ export function CustomChannelHeader  (props) {
     const { name } = channel.data || {};  
     const { client } = useChatContext();
     const { closeThread } = useChannelActionContext();
-                   
+                       
   
     const getWatcherText = (watchers) => {
       if (!watchers) return 'No users online';

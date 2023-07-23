@@ -41,7 +41,18 @@ const App = () => {
     const [isInvalidLogin, setIsinvalidLogin] = useState(false);     
 
     if(!authToken) return <Auth />
-
+   
+    client.on("message.new", event => {
+      // Do something with the new message
+      if (event.user.name !== cookies.get('username')){
+      const notification = new Notification(event.user.name, {
+        body: event.message.text, 
+        icon: "./favicon.png",
+        tag: event.message.id,
+        renotify: false
+        }).show;   
+    }});
+    
 
     if (Notification.permission === 'default')
     {      
