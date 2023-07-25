@@ -992,9 +992,9 @@
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
     font-weight: bold;
-    margin-right: 16px;
+    margin-right: 0px;
     cursor: pointer;
-    z-index: 2;
+    z-index: 0;
   }
   
   .channel-preview__wrapper:hover {
@@ -1002,7 +1002,7 @@
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
     font-weight: bold;
-    margin-right: 16px;
+    margin-right: 0px;
     cursor: pointer;
   }
 
@@ -1011,7 +1011,7 @@
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
     font-weight: bold;
-    margin-right: 16px;
+    margin-right: 0px;
     cursor: pointer;
   }
   
@@ -1854,13 +1854,26 @@
     --str-chat__channel-list-background-color: transparent;
     --str-chat__attachment-preview-image-background-color: transparent;
     --str-chat__avatar-border-radius: var(--str-chat__border-radius-circle);
-    --str-chat__avatar-background-color: #2f3030;
+    --str-chat__avatar-background-color: #2f3030;    
     --str-chat__message-reactions-options-border-radius: 4px;
     --str-chat__message-reactions-options-background-color: #f1f1f1;  
     --str-chat__message-reactions-option-background-color: #f1f1f1;
     --str-chat__channel-header-background-color: #fcfcfc;
   }
 
+.border-green {
+  border-style: solid;
+  border-color: #08fa31;
+  border-radius: 50%;
+  border-width: 2px;
+}
+
+.border-red {
+  border-style: solid;
+  border-color: #fa0814;
+  border-radius: 50%;
+  border-width: 2px;
+}
 
 .block {
     display: block;
@@ -2288,4 +2301,32 @@
   cursor: pointer;
   transition: 0.3s ease;
   margin: 0 auto;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  top: -5px;
+  right: 105%;
+   
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
 }

@@ -27,7 +27,7 @@ const UserItem = ({ user, setSelectedUsers }) => {
 
         setSelected((prevSelected) => !prevSelected)
     }
-    console.log(window.location.href);
+    
     return (
         <div className="user-item__wrapper" onClick={handleSelect}>
             <div className="user-item__name-wrapper">

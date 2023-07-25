@@ -30,6 +30,7 @@ import {
   } from "react"
 
   import LogoutIcon from '../assets/logout.png'
+  import LeaveChatIcon from '../assets/leave_chat.png'
   import ProfileEditIcon from '../assets/profile_edit.png'
   import PinIcon from '../assets/pin_22.png'
   import { ProfileEdit, ChannelContainer } from './';
@@ -43,6 +44,8 @@ export function CustomChannelHeader  (props) {
     const { title, setIsEditing, setIsEditingProfile, setPinsOpen } = props;
     const [showConfirm, setShowConfirm] = useState(false);
     const [showConfirmRemCh, setShowConfirmRemCh] = useState(false);
+    const [showConfirmLeave, setShowConfirmLeave] = useState(false);
+    const { setActiveChannel } = useChatContext();
     //const navigate = useNavigate()
   
     const { channel, watcher_count } = useChannelStateContext();
@@ -83,15 +86,15 @@ export function CustomChannelHeader  (props) {
       
       setIsCreatingDM(true);
       try {
-        const newChannel =  client.channel("messaging", userId, {
-          name: userId, members: [userId,client.userID], 
+        const newChannel =  client.channel("messaging",  {
+          members: [userId,client.userID],           
         });
 
         await newChannel.watch();
+        setIsCreatingDM(false);
+        setActiveChannel(newChannel);     
       } catch (error) {
         console.error(error);
-      } finally {        
-        setIsCreatingDM(false);
       }
     };
 
@@ -138,12 +141,35 @@ export function CustomChannelHeader  (props) {
       setShowConfirmRemCh(false);     
       const destroy = await channel.delete(); 
     };
+
+    const handleConfirmLeave  = async () => {
+      // Perform the action to be taken on confirmation
+      setShowConfirmLeave(false);     
+      await channel.hide(null, true);
+      await channel.removeMembers([client.userID]);
+      const filters = {
+                    type: 'team',
+                    members: { $in: [client.userID] },
+                   };
+      const sort = { last_message_at: -1 };             
+      const [existingChannel] = await client.queryChannels(filters, sort, {limit:1});
+                  
+      if (existingChannel) return setActiveChannel(existingChannel);
+    };
+
+    const handleConfirmLeaveDM  = async () => {
+      // Perform the action to be taken on confirmation
+      console.log('Confirmed!');
+      setShowConfirmLeave(false);     
+      await channel.hide(null, true);
+    };
   
     const handleCancel = () => {
       // Perform the action to be taken on cancellation
       console.log('Cancelled!');
       setShowConfirm(false);
       setShowConfirmRemCh(false);
+      setShowConfirmLeave(false);
     };
   
     
@@ -177,21 +203,26 @@ export function CustomChannelHeader  (props) {
               </div> 
               <div className="flex ml-auto">
                   <div className="logout_button__icon3">
+                    <div className="icon1__inner" onClick={()=>setShowConfirmLeave(true)} >
+                        <img src={LeaveChatIcon} alt="Leave Conversation" width="30" title="Leave Conversation"/>                        
+                    </div>
+                  </div>                  
+                  <div className="logout_button__icon3">
                     <div className="icon1__inner" onClick={(e) => {
                                                       closeThread(e);
                                                       setPinsOpen((prevState) => !prevState);
                                                     }} >
-                        <img src={PinIcon} alt="Pinned Messages" width="24" />
+                        <img src={PinIcon} alt="Pinned Messages" width="24" title="Show Pinned Messages"/>                        
                     </div>
                   </div>                  
                   <div className="logout_button__icon3">                 
                     <div className="icon1__inner" onClick={() => setIsEditingProfile(true)} >
-                        <img src={ProfileEditIcon} alt="Edit Profile" width="40" />
+                        <img src={ProfileEditIcon} alt="Edit Profile" width="40" title="Edit Your Profile" />
                     </div>
                   </div>
                   <div className="logout_button__icon3">              
                     <div className="icon1__inner" onClick={()=>setShowConfirm(true)}>
-                        <img src={LogoutIcon} alt="Logout" width="25" />
+                        <img src={LogoutIcon} alt="Logout" width="25" title="Logout" />
                     </div>
                 </div>                          
           </div>     
@@ -257,6 +288,13 @@ export function CustomChannelHeader  (props) {
         onConfirm={handleConfirmRemCh}
         onCancel={handleCancel}
       />)} 
+         { (showConfirmLeave) && (
+          <ConfirmModal
+        isOpen={showConfirmLeave}
+        message = {"Are you sure you want to leave the channel: " + channel.data.name + "?"}
+        onConfirm={handleConfirmLeave}
+        onCancel={handleCancel}
+      />)} 
         </div>
       );
    }
@@ -290,22 +328,27 @@ export function CustomChannelHeader  (props) {
             {getWatcherText(watcher_count)}
           </div> </div>
           <div className="flex ml-auto">
-              <div className="logout_button__icon3">
-                 <div className="icon1__inner" onClick={(e) => {
+                <div className="logout_button__icon3">
+                     <div className="icon1__inner" onClick={()=>setShowConfirmLeave(true)} >
+                          <img src={LeaveChatIcon} alt="Leave Conversation" width="30" title="Leave Conversation"/>                        
+                      </div>
+                </div>   
+                <div className="logout_button__icon3">
+                     <div className="icon1__inner" onClick={(e) => {
                                                   closeThread(e);
                                                   setPinsOpen((prevState) => !prevState);
                                                 }} >
-                    <img src={PinIcon} alt="Pinned Messages" width="24" />
+                        <img src={PinIcon} alt="Pinned Messages" width="24" title="Show Pinned Messages"/>
+                     </div>
                 </div>
-              </div>
               <div className="logout_button__icon3">
                  <div className="icon1__inner" onClick={() => setIsEditingProfile(true)} >
-                    <img src={ProfileEditIcon} alt="Edit Profile" width="40" />
+                    <img src={ProfileEditIcon} alt="Edit Profile" width="40" title="Edit Your Profile"/>
                 </div>
               </div>
               <div className="logout_button__icon3">              
                 <div className="icon1__inner" onClick={()=>setShowConfirm(true)}>
-                    <img src={LogoutIcon} alt="Logout" width="25" />
+                    <img src={LogoutIcon} alt="Logout" width="25" title="Logout"/>
                 </div>
             </div>                          
           </div>    
@@ -317,6 +360,13 @@ export function CustomChannelHeader  (props) {
         onConfirm={handleConfirm}
         onCancel={handleCancel}
       />)}
+      { (showConfirmLeave) && (
+          <ConfirmModal
+        isOpen={showConfirmLeave}
+        message = {"Are you sure you want to leave this conversation?"}
+        onConfirm={handleConfirmLeaveDM}
+        onCancel={handleCancel}
+      />)} 
       </div>
     );
    }

@@ -63,15 +63,17 @@ const TeamChannelPreview = ({ setActiveChannel, setIsCreating, setIsEditing, set
                unreadCount = newMessageCount;
             else if ((newMessageCount > 0) && (newMessageCount > 10))
                unreadCount = "9+";          
-            
+        
 
         return (
-            <div className="flex channel-preview__item ">
+            <div className="flex channel-preview__item  ">
+                <div className={members[0].user.online ? "border-green" : "border-red"}>
                 <Avatar 
                     image={members[0]?.user?.image}
                     name={members[0]?.user?.fullName || members[0]?.user?.id}
                     size={24}
-                />
+                    className = "border-green"
+                /></div>
                 { (unreadCount !=="" ) ?
         <button data-count = {unreadCount}
                className="button26"

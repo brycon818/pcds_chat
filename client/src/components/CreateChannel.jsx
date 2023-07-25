@@ -27,18 +27,38 @@ const CreateChannel = ({ createType, setIsCreating }) => {
 
     const createChannel = async (e) => {
         e.preventDefault();
-
+        var filters;
+                
+        var existingChannel ;
+        
+          
         try {
             //previously has "await"
-            const newChannel =  client.channel(createType, channelName.replace(/\s/g, ''), {
-                name: channelName, members: selectedUsers, 
-            });
+            var newChannel;
+            if (createType === 'team')
+                newChannel =  client.channel(createType, channelName.replace(/\s/g, ''), {
+                    name: channelName, members: selectedUsers, 
+                });
+            else   {
+               /* filters = {
+                    type: 'messaging',
+                    member_count: 2,
+                    members: { $eq: [selectedUsers[0], client.userID] },
+                  };
+                [existingChannel] = await client.queryChannels(filters);
+                console.log(existingChannel);
+                console.log(selectedUsers);
+                if (existingChannel) return setActiveChannel(existingChannel);*/
+                newChannel =  client.channel(createType,  {
+                    members: selectedUsers, 
+                }); 
+            }
 
             await newChannel.watch();
 
             setChannelName('');
-            setIsCreating(false);
             setSelectedUsers([client.userID]);
+            setIsCreating(false);            
             setActiveChannel(newChannel);
         } catch (error) {
             console.log(error);
