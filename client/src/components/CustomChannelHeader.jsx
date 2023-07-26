@@ -144,17 +144,20 @@ export function CustomChannelHeader  (props) {
 
     const handleConfirmLeave  = async () => {
       // Perform the action to be taken on confirmation
-      setShowConfirmLeave(false);     
+      setShowConfirmLeave(false);      
+      
       await channel.hide(null, true);
       await channel.removeMembers([client.userID]);
+      //await channel.removeMembers([client.userID], { text: client.user.fullName + ' has left the channel.' });      
       const filters = {
                     type: 'team',
                     members: { $in: [client.userID] },
                    };
       const sort = { last_message_at: -1 };             
       const [existingChannel] = await client.queryChannels(filters, sort, {limit:1});
-                  
+                        
       if (existingChannel) return setActiveChannel(existingChannel);
+      //window.location.reload();
     };
 
     const handleConfirmLeaveDM  = async () => {
@@ -264,7 +267,7 @@ export function CustomChannelHeader  (props) {
                   ))}
                   {(client.user.role==='admin') && (
                   <div className="flex mt-2">                                  
-                    <button onClick={() => setIsEditing(true)}>Add Members</button>                    
+                    <button onClick={() => setIsEditing(true)}>Edit Channel</button>                    
                     <button className="ml-2" onClick={() => setShowConfirmRemCh(true)}>Remove this Channel</button>
                   </div>              
                   )}        

@@ -29,6 +29,7 @@ const Auth = () => {
     const [selectedValues, setSelectedValues] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null); //file for the avatar    
     const [showAlert, setShowAlert] = useState(false);
+    const [passwordMismatch, setPasswordMismatch] = useState(false);
             
     var avatarFileName=null;
 
@@ -42,6 +43,7 @@ const Auth = () => {
     
       const handleCloseAlert = () => {
         setShowAlert(false);
+        setPasswordMismatch(false);
       };
 
     const handleSelectChange = (selectedOptions) => {
@@ -82,6 +84,11 @@ const Auth = () => {
         if(isSignup) {
             await onFileUpload();  
             console.log("filename: " + avatarFileName);
+
+            if (form.password !== form.confirmPassword) {
+               setPasswordMismatch(true);
+               return;
+            }
         }
 //
         try {
@@ -293,6 +300,11 @@ const Auth = () => {
             <AlertWindow
                 isOpen={showAlert}
                 message="Invalid Username or Password."
+                onClose={handleCloseAlert}
+            />
+            <AlertWindow
+                isOpen={passwordMismatch}
+                message="Passwords do not match"
                 onClose={handleCloseAlert}
             />
         </div>

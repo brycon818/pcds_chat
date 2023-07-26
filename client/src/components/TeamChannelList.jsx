@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, } from 'react';
 
 import { AddChannel } from '../assets';
 
@@ -9,9 +9,9 @@ import { useChatContext } from 'stream-chat-react';
 
 
 const TeamChannelList = ({ setToggleContainer, children, error = false, loading, type, isCreating, setIsCreating, setCreateType, setIsEditing, loadedChannels }) =>  {   
-    const { client } = useChatContext();
-    const [messageId, setMessageId] = useState();
-    const [count, setCount] = useState(0);
+    const { client } = useChatContext();    
+    const [count, setCount] = useState();
+      
         
     if(error) {
         return type === 'team' ? (

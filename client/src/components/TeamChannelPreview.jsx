@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Avatar, useChatContext } from 'stream-chat-react';
+import { Avatar, useChatContext, } from 'stream-chat-react';
 
 
 
@@ -7,11 +7,14 @@ const TeamChannelPreview = ({ setActiveChannel, setIsCreating, setIsEditing, set
     const { channel: activeChannel, client } = useChatContext();
     const [count, setCount] = useState(0);
     const [newMessageCount, setNewMessageCount] = useState(0);
+    const [currentDate, setCurrentDate] = useState(new Date());        
         
     useEffect(() => {
         var timerID = setInterval(() => {
             setNewMessageCount(channel.state.unreadCount);
-        }, 2000);
+            setCurrentDate(new Date());
+
+        }, 3000);
      
         return () => clearInterval(timerID);
       },[]);
@@ -52,22 +55,21 @@ const TeamChannelPreview = ({ setActiveChannel, setIsCreating, setIsEditing, set
         </div>
         )
     };
-
+  
 
     const DirectPreview = () => {
-        const members = Object.values(channel.state.members).filter(({ user }) => user.id !== client.userID);
-                
-
+        const members = Object.values(channel.state.members).filter(({ user }) => user.id !== client.userID);                                
+        
             var unreadCount = "";
             if ((newMessageCount > 0) && (newMessageCount < 10))
                unreadCount = newMessageCount;
             else if ((newMessageCount > 0) && (newMessageCount > 10))
-               unreadCount = "9+";          
-        
-
+               unreadCount = "9+";    
+                             
+                     
         return (
             <div className="flex channel-preview__item  ">
-                <div className={members[0].user.online ? "border-green" : "border-red"}>
+                <div className={(channel.state.watcher_count > 1) ? "border-green" : "border-red"}>
                 <Avatar 
                     image={members[0]?.user?.image}
                     name={members[0]?.user?.fullName || members[0]?.user?.id}

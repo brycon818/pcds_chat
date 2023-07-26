@@ -26,9 +26,9 @@ const signup = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const existingUsers = await streamChat.queryUsers({ id: userId })
-        /*if (existingUsers.users.length > 0) {
+        if (existingUsers.users.length > 0) {
             return res.status(400).send("User ID taken")
-            }*/
+        }
         
         let userRole = '';
 
@@ -72,8 +72,9 @@ const login = async (req, res) => {
         const serverClient = connect(api_key, api_secret, app_id);
         const client = StreamChat.getInstance(api_key, api_secret);
 
+        
         const { users } = await client.queryUsers({ name: username });
-
+        
         if(!users.length) return res.status(401).json({ message: 'User not found' });
         
         var success = false;
@@ -137,12 +138,14 @@ const update = async (req, res) => {
             hashedPassword = existingUsers.users[0].hashedPassword;           
         }
         else {
+            
            hashedPassword = await bcrypt.hash(password, 10);
         };
     
         await streamChat.upsertUser({ 
             id : userId, 
-            role : userRole,                     
+            role : userRole,   
+            name : userId,                  
             fullName,
             password : hashedPassword,
             email: email,

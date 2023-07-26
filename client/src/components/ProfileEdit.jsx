@@ -7,6 +7,7 @@ import Select, {setSelectedValues} from "react-select"
 
 import { CloseEditProfile } from '../assets';
 import { useChatContext } from "stream-chat-react/dist/context"    
+import AlertWindow from './AlertWindow';
 import dotenv from "dotenv";
 
 const cookies = new Cookies();   
@@ -27,6 +28,7 @@ const ProfileEdit = ({setIsEditingProfile}) => {
     const [form, setForm] = useState(initialState);
     
     const [isSignup, setIsSignup] = useState(true);
+    const [passwordMismatch, setPasswordMismatch] = useState(false);
 
     const teamOptions = [
         { value: 'GWA', label: 'GWA' },
@@ -52,12 +54,40 @@ const ProfileEdit = ({setIsEditingProfile}) => {
     
     var avatarFileName=null;
 
+    const handleCloseAlert = () => {
+        setPasswordMismatch(false);
+      };
+
     const handleChange = (e) => {
         setForm({...form, [e.target.name]: e.target.value });
     };
+
+    const handleOnBlur = async (e) => {
+        const user1 = await client.queryUsers(
+            { id: { $eq: e.target.value } },                 
+       );   
+              
+       
+       if (user1.users.length >0) {
+            let userTeams = [];
+            for (let i = 0; i < user1.users[0].teams.length; i++) {              
+                userTeams.push({value: user1.users[0].teams[i], label: user1.users[0].teams[i]} );
+            }
+            
+            setForm({...form, 
+                        fullName: user1.users[0].fullName,
+                        email: user1.users[0].email,
+                        phoneNumber: user1.users[0].phoneNumber,                        
+            }); 
+
+            setSelectedValues(userTeams);            
+        
+    }
+    };
     
     const handleSelectChange = (selectedOptions) => {
-        setSelectedValues(selectedOptions);       
+        setSelectedValues(selectedOptions);    
+        console.log(selectedValues);   
       };
 
       const handleFileSelect = (event) => {
@@ -116,39 +146,45 @@ const ProfileEdit = ({setIsEditingProfile}) => {
         //const URL = 'http://localhost:5000/auth';
         // const URL = 'https://medical-pager.herokuapp.com/auth';
         
+        if (form.password !== form.confirmPassword) {
+            setPasswordMismatch(true);
+            return;
+         }
         
         let userTeams = [];
         for (let i = 0; i < selectedValues.length; i++) {              
             userTeams.push(selectedValues[i].value);
         }
 
+        
         const fullName1 = (form.fullName || client.user.fullName);
         const phoneNumber = (form.phoneNumber || client.user.phoneNumber);
         const email = (form.email || client.user.email);
-        const avatarURL = (form.avatarURL || client.user.avatarURL);
-        const password = (form.password || client.user.password);
-        const username = client.user.name;
+        const avatarURL = (form.avatarURL || client.user.image);
+        const password1 = (form.password || client.user.password);
+        const username = form.username;
+        
+        
 
         await onFileUpload();
 
         try {
             const { data: { token, userId, password, fullName, role} } = await axios.post(`${URL}/${isSignup ? 'update' : 'login'}`, {
-                username : client.user.name, password, fullName : fullName1, phoneNumber, image: avatarFileName, userTeams, email});
-
-            cookies.set('token', token);
-            cookies.set('username', username);
-            cookies.set('fullName', fullName);
-            cookies.set('userId', userId);
-            cookies.set('role', role);
-        
-
-            if(isSignup) {
+                username : username, password: password1, fullName : fullName1, phoneNumber, image: avatarFileName, userTeams, email});
+            
+            if (client.user.name === form.username) {
+                cookies.set('token', token);
+                cookies.set('username', username);
+                cookies.set('fullName', fullName);
+                cookies.set('userId', userId);
+                cookies.set('role', role);            
                 cookies.set('phoneNumber', phoneNumber);
                 cookies.set('avatarURL', avatarURL);
                 cookies.set('hashedPassword', password);
+        
             }
-
             window.location.reload();
+        
 
         }
         catch (error){
@@ -165,7 +201,7 @@ const ProfileEdit = ({setIsEditingProfile}) => {
     }
 
     //auth__form-container_fields-content
-    console.log('inside ProfileEdit.jsx');
+
     return (
         <div className="auth__form-container2">
             <div className="auth__form-container_fields bg-gray-100">
@@ -183,6 +219,7 @@ const ProfileEdit = ({setIsEditingProfile}) => {
                                     type="text"
                                     placeholder="Username"
                                     onChange={handleChange}
+                                    onBlur={handleOnBlur}
                                     required
                                     readOnly={(client.user.role!=="admin")}
                                 />
@@ -276,11 +313,16 @@ const ProfileEdit = ({setIsEditingProfile}) => {
                             </div>
                             )}
                         <div className="auth__form-container_fields-content_button">
-                            <button>{isSignup ? "Update Profile" : "Sign In"}</button>
+                            <button type="button" onClick={handleSubmit}>{isSignup ? "Update Profile" : "Sign In"}</button>
                         </div>
                     </form>                    
                 </div> 
-            </div>            
+            </div>     
+            <AlertWindow
+                isOpen={passwordMismatch}
+                message="Passwords do not match"
+                onClose={handleCloseAlert}
+            />       
         </div>
     )
 }

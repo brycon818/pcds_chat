@@ -617,6 +617,7 @@
     height: 169px;
     padding-left: 20px;
     box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.1);
+    padding-top: 10px;
   }
   
   .channel-name-input__wrapper p {
@@ -629,7 +630,7 @@
   
   .channel-name-input__wrapper input {
     font-family: Helvetica Neue, sans-serif;
-    font-size: 18px;
+    font-size: 16px;
     color: rgba(0, 0, 0, 0.5);
     height: 50px;
     width: 540px;
@@ -646,7 +647,7 @@
   }
   
   .channel-name-input__wrapper input::placeholder {
-    font-weight: 300;
+    font-weight: 200;
     color: rgba(0, 0, 0, 0.5);
   }
   
@@ -1982,7 +1983,7 @@
 
 .members_grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: 250px 250px;
   grid-template-rows: repeat(1, 1fr);
   margin: 0;
   padding: 0;
@@ -2330,3 +2331,15 @@
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
+
+.switch-container {
+  display: flex;
+  align-items: center;
+}
+
+.switch_label {
+  display: inline-block;
+  width: 250px;
+  padding-left : 15px;
+  text-align: right;
+  }
