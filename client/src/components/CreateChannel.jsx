@@ -37,7 +37,7 @@ const CreateChannel = ({ createType, setIsCreating }) => {
             var newChannel;
             if (createType === 'team')
                 newChannel =  client.channel(createType, channelName.replace(/\s/g, ''), {
-                    name: channelName, members: selectedUsers, hotline: 1
+                    name: channelName, members: selectedUsers, 
                 });
             else   {
                /* filters = {

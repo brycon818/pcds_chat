@@ -2338,7 +2338,7 @@
 }
 
 .switch_label {
-  display: inline-block;
+  display: block;
   width: 250px;
   padding-left : 15px;
   text-align: right;
