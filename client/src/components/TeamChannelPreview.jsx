@@ -7,13 +7,13 @@ const TeamChannelPreview = ({ setActiveChannel, setIsCreating, setIsEditing, set
     const { channel: activeChannel, client } = useChatContext();
     const [count, setCount] = useState(0);
     const [newMessageCount, setNewMessageCount] = useState(0);
-    const [currentDate, setCurrentDate] = useState(new Date());        
+    //const [currentDate, setCurrentDate] = useState(new Date());        
         
     useEffect(() => {
         var timerID = setInterval(() => {
             setNewMessageCount(channel.state.unreadCount);
-            setCurrentDate(new Date());
-
+      //      setCurrentDate(new Date());
+            
         }, 3000);
      
         return () => clearInterval(timerID);

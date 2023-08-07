@@ -1,8 +1,10 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState } from 'react';
 import { StreamChat } from 'stream-chat';
 import { Chat } from 'stream-chat-react';
 import Cookies from 'universal-cookie';
 import dotenv from "dotenv";
+
+
 
 import { ChannelListContainer, ChannelContainer, Auth, } from './components';
 
@@ -32,16 +34,18 @@ if(authToken) {
 }
 
 
+
 const App = () => {
     const [createType, setCreateType] = useState('');
     const [isCreating, setIsCreating] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [isEditingProfile, setIsEditingProfile] = useState(false);
     const [showNotificationBanner, setShowNotificationBanner] = useState(false);
-    const [isInvalidLogin, setIsinvalidLogin] = useState(false);     
-
+   // const [isInvalidLogin, setIsinvalidLogin] = useState(false);     
+  
     if(!authToken) return <Auth />
-   
+    
+  
     client.on("message.new", event => {
       // Do something with the new message
       if (event.user.name !== cookies.get('username')){
@@ -51,7 +55,14 @@ const App = () => {
         tag: event.message.id,
         renotify: false
         }).show;   
+        
     }});
+
+    client.on((event) => {
+      if (event.total_unread_count !== undefined) {
+                     navigator.setAppBadge(event.total_unread_count);                               
+      }      
+   });
     
 
     if (Notification.permission === 'default')

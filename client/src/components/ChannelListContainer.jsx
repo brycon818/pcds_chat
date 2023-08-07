@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import { ChannelList, useChatContext } from 'stream-chat-react';
 import Cookies from 'universal-cookie';
 
@@ -70,6 +70,8 @@ const ChannelListContent = ({ isCreating, setIsCreating, setCreateType, setIsEdi
     }
 
     const filters = { members: { $in: [client.userID] } };
+    
+     
 
     return (
         <>

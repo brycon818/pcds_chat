@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, } from 'react';
 import Cookies from 'universal-cookie';
 import axios from 'axios';
 

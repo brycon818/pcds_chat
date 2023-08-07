@@ -46,7 +46,7 @@ const ChannelMembersList = ({ setSelectedUsers }) => {
     const [loading, setLoading] = useState(false);
     const [listEmpty, setListEmpty] = useState(false);
     const [error, setError] = useState(false);
-    const { channel } = useChannelStateContext();
+    //const { channel } = useChannelStateContext();
 
     useEffect(() => {
         const getUsers = async () => {
