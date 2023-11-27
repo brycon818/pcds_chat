@@ -7,19 +7,31 @@ import PCDS_Logo from '../assets/pcds_logo_square.png'
 import LogoutIcon from '../assets/logout.png'
 import ProfileEditIcon from '../assets/profile_edit.png'
 import { Link } from 'react-router-dom';
-
+import ConfirmModal from './ConfirmModal';
 
 
 const cookies = new Cookies();
 
-const SideBar = ({ logout, setIsEditingProfile }) => (
+
+
+
+const SideBar = ({ logout, setIsEditingProfile, setShowConfirm }) => (    
     <div className="channel-list__sidebar">
         <div className="channel-list__sidebar__icon1">
             <div className="icon1__inner">
                 <img src={PCDS_Logo} alt="Logo" width="40" />
             </div>
         </div>                
-        
+        <div className="channel-list__sidebar__icon2">                 
+            <div className="icon1__inner" onClick={() => setIsEditingProfile(true)} >
+                <img src={ProfileEditIcon} alt="Edit Profile" width="40" title="Edit Your Profile" />
+            </div>
+        </div>      
+        <div className="channel-list__sidebar__icon2">              
+            <div className="icon1__inner" onClick={()=>setShowConfirm(true)}>
+                <img src={LogoutIcon} alt="Logout" width="25" title="Logout" />
+            </div>
+        </div> 
     </div>
 );
 
@@ -39,8 +51,9 @@ const customChannelMessagingFilter = (channels) => {
 
 
 
-const ChannelListContent = ({ isCreating, setIsCreating, setCreateType, setIsEditing, setToggleContainer, setIsEditingProfile }) => {
+const ChannelListContent = ({ isCreating, setIsCreating, setCreateType, setIsEditing, setToggleContainer, setIsEditingProfile, setShowConfirm }) => {
     const { client } = useChatContext();
+    
 
     const logout = () => {
         const confirmed = window.confirm('Are you sure you want to log out?');
@@ -54,6 +67,7 @@ const ChannelListContent = ({ isCreating, setIsCreating, setCreateType, setIsEdi
             cookies.remove('avatarURL');
             cookies.remove('hashedPassword');
             cookies.remove('phoneNumber');
+            cookies.remove('role');
 
             window.location.reload();
         }
@@ -70,13 +84,13 @@ const ChannelListContent = ({ isCreating, setIsCreating, setCreateType, setIsEdi
     }
 
     const filters = { members: { $in: [client.userID] } };
-    
-     
+       
 
     return (
         <>
             <SideBar logout={logout} 
-                     setIsEditingProfile={setIsEditingProfile} />
+                     setIsEditingProfile={setIsEditingProfile} 
+                     setShowConfirm={setShowConfirm}/>
             <div className="channel-list__list__wrapper">
                 <CompanyHeader />
                 <ChannelSearch setToggleContainer={setToggleContainer} />
@@ -137,6 +151,38 @@ const ChannelListContent = ({ isCreating, setIsCreating, setCreateType, setIsEdi
 
 const ChannelListContainer = ({ setCreateType, setIsCreating, setIsEditing, setIsEditingProfile }) => {
     const [toggleContainer, setToggleContainer] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);  
+    
+    const handleConfirm = () => {
+        // Perform the action to be taken on confirmation
+        console.log('Confirmed!');
+        setShowConfirm(false);
+        logout();
+      };
+    
+    const handleCancel = () => {
+        // Perform the action to be taken on cancellation
+        console.log('Cancelled!');
+        setShowConfirm(false);      
+      };
+
+    const logout = () => {
+        //const confirmed = window.confirm('Are you sure you want to log out?');
+        
+        //if (confirmed) {
+
+            cookies.remove("token");
+            cookies.remove('userId');
+            cookies.remove('username');
+            cookies.remove('fullName');
+            cookies.remove('avatarURL');
+            cookies.remove('hashedPassword');
+            cookies.remove('phoneNumber');
+            cookies.remove('role');
+
+            window.location.reload();
+        //}
+    }
 
     return (
         <>
@@ -146,6 +192,7 @@ const ChannelListContainer = ({ setCreateType, setIsCreating, setIsEditing, setI
                 setCreateType={setCreateType} 
                 setIsEditing={setIsEditing} 
                 setIsEditingProfile={setIsEditingProfile}
+                setShowConfirm={setShowConfirm}
               />
             </div>
 
@@ -160,8 +207,17 @@ const ChannelListContainer = ({ setCreateType, setIsCreating, setIsEditing, setI
                 setIsEditing={setIsEditing}
                 setIsEditingProfile={setIsEditingProfile}
                 setToggleContainer={setToggleContainer}
+                setShowConfirm={setShowConfirm}
               />
             </div>
+            { (showConfirm) && (
+                    <ConfirmModal
+                        isOpen={showConfirm}
+                        message="Are you sure you want to logout?"
+                        onConfirm={handleConfirm}
+                        onCancel={handleCancel}
+                    />)
+            }
         </>
     )
 

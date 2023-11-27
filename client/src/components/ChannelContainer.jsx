@@ -38,6 +38,7 @@ const ChannelContainer = ({ isCreating, setIsCreating, isEditing, setIsEditing, 
     )
 
     
+    
     return (        
         <div className=" channel__container">                    
            <Channel
