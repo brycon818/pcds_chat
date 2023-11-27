@@ -217,17 +217,7 @@ export function CustomChannelHeader  (props) {
                                                     }} >
                         <img src={PinIcon} alt="Pinned Messages" width="24" title="Show Pinned Messages"/>                        
                     </div>
-                  </div>                  
-                  <div className="logout_button__icon3">                 
-                    <div className="icon1__inner" onClick={() => setIsEditingProfile(true)} >
-                        <img src={ProfileEditIcon} alt="Edit Profile" width="40" title="Edit Your Profile" />
-                    </div>
-                  </div>
-                  <div className="logout_button__icon3">              
-                    <div className="icon1__inner" onClick={()=>setShowConfirm(true)}>
-                        <img src={LogoutIcon} alt="Logout" width="25" title="Logout" />
-                    </div>
-                </div>                          
+                  </div>                                    
           </div>     
           </div>
           </div>
@@ -277,13 +267,7 @@ export function CustomChannelHeader  (props) {
           )
           }
           </div>
-          { (showConfirm) && (
-          <ConfirmModal
-        isOpen={showConfirm}
-        message="Are you sure you want to logout?"
-        onConfirm={handleConfirm}
-        onCancel={handleCancel}
-      />)}
+         
          { (showConfirmRemCh) && (
           <ConfirmModal
         isOpen={showConfirmRemCh}
@@ -310,8 +294,11 @@ export function CustomChannelHeader  (props) {
       
       channelName =  members[0]?.user?.fullName || members[0]?.user?.name || members[0]?.user?.id 
       imageSource = members[0]?.user?.image;
+
+      if ((imageSource === null) || (imageSource==="null")) {
+         imageSource = "/icons8-customer-32.png";
+      }
              
-  
     return (
       <div className='str-chat__header-livestream'>
         <div
@@ -343,26 +330,9 @@ export function CustomChannelHeader  (props) {
                                                 }} >
                         <img src={PinIcon} alt="Pinned Messages" width="24" title="Show Pinned Messages"/>
                      </div>
-                </div>
-              <div className="logout_button__icon3">
-                 <div className="icon1__inner" onClick={() => setIsEditingProfile(true)} >
-                    <img src={ProfileEditIcon} alt="Edit Profile" width="40" title="Edit Your Profile"/>
-                </div>
-              </div>
-              <div className="logout_button__icon3">              
-                <div className="icon1__inner" onClick={()=>setShowConfirm(true)}>
-                    <img src={LogoutIcon} alt="Logout" width="25" title="Logout"/>
-                </div>
-            </div>                          
+                </div>                                        
           </div>    
-      </div>
-      { (showConfirm) && (
-          <ConfirmModal
-        isOpen={showConfirm}
-        message="Are you sure you want to logout?"
-        onConfirm={handleConfirm}
-        onCancel={handleCancel}
-      />)}
+      </div>      
       { (showConfirmLeave) && (
           <ConfirmModal
         isOpen={showConfirmLeave}

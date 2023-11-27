@@ -369,7 +369,7 @@
     .str-chat__message-actions-box {
     left: initial;
     right: 100%;
-    border-radius: var(--border-radius-md);
+    border-radius: var(--border-radius-md);        
   }
   
   .channel-list__container {
@@ -1860,6 +1860,8 @@
     --str-chat__message-reactions-options-background-color: #f1f1f1;  
     --str-chat__message-reactions-option-background-color: #f1f1f1;
     --str-chat__channel-header-background-color: #fcfcfc;
+    --str-chat__message-actions-box-border-block-start: 50px solid;
+    --str-chat__message-actions-box-item-border-block-start: 50px;
   }
 
 .border-green {
